@@ -144,6 +144,7 @@ def main() -> int:
         assert calibration["schema"] == "calibration_hints"
         assert calibration["basis"]["stored_text"] is False
         assert "hints" in calibration
+        assert "signal_catalog" in calibration
 
         korean_naturalness = call_tool(
             client,

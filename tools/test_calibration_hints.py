@@ -49,9 +49,63 @@ def test_length_and_anachronism_hints() -> None:
     assert result["input_metrics"]["max_chars"] > result["thresholds"]["hard_max_chars"]
 
 
+def test_korean_politeness_context_hints() -> None:
+    lines = [
+        "A: 안됩니다.",
+        "B: 기다려.",
+        "A: 빨리 서류 보내세요.",
+    ]
+    result = build_calibration_hints(
+        lines,
+        profile_path=Path("missing-profile.json"),
+        scene="고객이 환불을 요구하며 항의하는 상황",
+        relationship_boundaries="초면, 공식, 고객, 민원",
+    )
+
+    relationship_hints = [
+        hint for hint in result["hints"] if hint["axis"] == "relationship_fit"
+    ]
+    signals = {signal for hint in relationship_hints for signal in hint["signals"]}
+    assert "direct_command_in_polite_context" in signals
+    assert "unsoftened_request_in_polite_context" in signals
+    assert "blunt_refusal_without_buffer" in signals
+    assert "missing_apology_or_acknowledgement_in_service_context" in signals
+    assert "direct_command_in_polite_context" in result["signal_catalog"]
+
+    serialized = json.dumps(result, ensure_ascii=False)
+    for source_fragment in ["안됩니다", "기다려", "서류 보내세요"]:
+        assert source_fragment not in serialized
+
+
+def test_buffered_polite_request_not_flagged() -> None:
+    lines = [
+        "A: 고객님, 죄송하지만 잠시만 기다려 주시겠어요?",
+        "B: 확인해 주셔서 감사합니다.",
+    ]
+    result = build_calibration_hints(
+        lines,
+        profile_path=Path("missing-profile.json"),
+        scene="고객 문의를 처리하는 상황",
+        relationship_boundaries="초면, 공식, 고객",
+    )
+
+    signals = {
+        signal
+        for hint in result["hints"]
+        if hint["axis"] == "relationship_fit"
+        for signal in hint["signals"]
+    }
+    assert "direct_command_in_polite_context" not in signals
+    assert "unsoftened_request_in_polite_context" not in signals
+    assert "blunt_refusal_without_buffer" not in signals
+    assert "missing_apology_or_acknowledgement_in_service_context" not in signals
+
+
 def main() -> int:
     test_mixed_speech_and_relationship_hints()
     test_length_and_anachronism_hints()
+    test_korean_politeness_context_hints()
+    test_buffered_polite_request_not_flagged()
     print("Calibration hint tests passed.")
     return 0
 

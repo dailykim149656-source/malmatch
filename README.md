@@ -9,6 +9,7 @@
 
 - 캐릭터 말투가 장면마다 흔들리는지 확인할 때
 - 반말, 존댓말, 반존대가 관계와 상황에 맞는지 볼 때
+- 초면, 고객 응대, 상하 관계에서 사과, 양해, 부탁의 예의 맥락이 맞는지 볼 때
 - 문법 오류, 번역투, 한국인답지 않은 구어 표현을 잡고 싶을 때
 - 위로, 조언, 농담, 고백, 갈등 대사가 과하거나 어색한지 점검할 때
 - 게임, 웹툰, 챗봇, 소설 대사의 길이와 밀도를 다듬을 때
@@ -83,7 +84,7 @@ get_rubric과 prepare_dialogue_audit 기준으로 평가하고, 필요한 경우
 | `get_rubric` | 8개 평가 축 불러오기 |
 | `get_prompt_template` | 검수, 리라이트, 농담, 어체 체크 프롬프트 불러오기 |
 | `get_examples` | 합성 good/bad 예시 조회 |
-| `get_calibration_hints` | 길이, 어체, 관계선 위험에 대한 로컬 보정 힌트 생성 |
+| `get_calibration_hints` | 길이, 어체, 관계선, 한국어 예의 맥락 위험에 대한 로컬 보정 힌트 생성 |
 | `get_korean_naturalness_hints` | 문법성, 번역투, 한국어 구어 리듬 힌트 생성 |
 | `prepare_dialogue_audit` | 장면, 캐릭터, 관계, 대사를 검수 패키지로 조립 |
 | `validate_skillpack` | 로컬 파일과 예시 구조 기본 검증 |
@@ -94,7 +95,7 @@ get_rubric과 prepare_dialogue_audit 기준으로 평가하고, 필요한 경우
 |---|---|
 | `naturalness` | 문법성, 한국어다운 표현, 구어 리듬이 자연스러운가 |
 | `character_fit` | 이 캐릭터가 할 법한 말인가 |
-| `relationship_fit` | 두 인물의 친밀도와 권력 거리에 맞는가 |
+| `relationship_fit` | 두 인물의 친밀도, 권력 거리, 예의 맥락에 맞는가 |
 | `speech_level_consistency` | 반말, 해요체, 합쇼체, 반존대가 일관적인가 |
 | `humor_timing` | 농담이 장면의 흐름을 해치지 않는가 |
 | `cringe_risk` | 작위적이거나 오글거리는 표현이 있는가 |

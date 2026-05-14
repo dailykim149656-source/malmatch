@@ -28,5 +28,9 @@
     - grammar_acceptability:
     - native_korean_idiom:
     - spoken_korean_rhythm:
+  - Korean politeness context:
+    - politeness_buffer:
+    - directness:
+    - power_distance:
 - Rewrite suggestion:
 - Keep unchanged:

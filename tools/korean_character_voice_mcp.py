@@ -204,7 +204,7 @@ def tools_list_result() -> dict[str, Any]:
             {
                 "name": "get_calibration_hints",
                 "title": "Get Calibration Hints",
-                "description": "Use this to get local, source-text-free soft signals for dialogue risks.",
+                "description": "Use this to get local, source-text-free soft signals for length, speech-level, relationship, and Korean politeness risks.",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
@@ -331,6 +331,7 @@ def get_overview() -> dict[str, Any]:
             "Load character voice and relationship boundary context.",
             "Select the relevant prompt template.",
             "Apply the eight-axis rubric.",
+            "Use calibration hints for Korean politeness, relationship boundaries, and speech-level risk.",
             "Use synthetic examples only as pattern references.",
             "Return minimal rewrites that preserve meaning and character function.",
         ],
@@ -353,6 +354,7 @@ def get_rubric(arguments: dict[str, Any]) -> dict[str, Any]:
             "Treat overly dense single-turn exposition as a naturalness and genre-fit risk.",
             "Evaluate character voice over a short scene, not only one isolated line.",
             "Use banmal, haeyoche, and hapsyoche as the primary speech-level axes.",
+            "In Korean politeness contexts, check apology, acknowledgement, request softening, and power distance.",
             "Separate empathy from advice, overpromising, and relationship boundary crossing.",
         ],
         "resource_uri": "malmatch://docs/evaluation_rubric",
@@ -477,6 +479,7 @@ def prepare_dialogue_audit(arguments: dict[str, Any]) -> dict[str, Any]:
         "guidance": [
             "Score all eight axes from 1 to 5.",
             "Use Korean naturalness hints to inspect grammar, native idiom, and spoken rhythm under naturalness.",
+            "Use calibration hints to inspect Korean politeness buffers, directness, and power distance under relationship_fit.",
             "Identify only issues grounded in the provided user lines and skill-pack rubric.",
             "Suggest minimal rewrites that preserve meaning, role, and relationship.",
             "Treat calibration hints as soft signals, not final scores.",

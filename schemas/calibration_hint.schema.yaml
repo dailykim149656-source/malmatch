@@ -1,11 +1,12 @@
 schema: calibration_hints
-version: 0.2
+version: 0.2.1
 description: 로컬 보정 레이어가 반환하는 원문 비포함 평가 힌트 형식
 required:
   - basis
   - thresholds
   - input_metrics
   - hints
+  - signal_catalog
 basis:
   profile_loaded: boolean
   profile_source: string
@@ -45,6 +46,10 @@ axis_values:
 hint:
   type: integer
   allowed_values: [-1, 0, 1]
+signal_catalog:
+  type: object
+  key: signal id string
+  value: source-text-free Korean description for the triggered signal
 confidence:
   type: number
   range: 0.0-0.99

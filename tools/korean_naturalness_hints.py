@@ -10,14 +10,12 @@ from __future__ import annotations
 import argparse
 import json
 import re
-from collections import Counter
-from pathlib import Path
 from typing import Any
 
 from calibration_hints import normalize_lines, strip_speaker_prefix
 
 
-VERSION = "0.3"
+VERSION = "0.3.1"
 
 AXES = (
     "grammar_acceptability",
@@ -26,10 +24,53 @@ AXES = (
 )
 
 DUPLICATE_PARTICLE_RE = re.compile(
-    r"(은는|는은|이가|가이|을를|를을|은은|는는|이이|가가|을을|를를|에에|에서에서)"
+    r"(은는|는은|을를|를을|은은|는는|이이|가가|을을|를를|에에|도도|만만|에서에서|에게에게)"
 )
 DUPLICATE_CONNECTIVE_RE = re.compile(r"(그리고\s+그리고|하지만\s+하지만|그래서\s+그래서)")
 ENDING_COLLISION_RE = re.compile(r"(습니다|습니까|입니다).{0,20}(어|아|야|잖아|거든)[.!?…]*$")
+NONSTANDARD_POLITE_ENDING_RE = re.compile(
+    r"(습니다요|습니까요|입니다요|입니까요|했어요요|해요요|하지요요|하자요|가자요|보자요|먹자요|만나자요|끝내자요|그만하자요)[.!?…]*$"
+)
+
+GRAMMAR_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
+    ("doe_dwae_confusion", re.compile(r"(되요|됬|안되(?:$|[.!?…\s])|안됬|됬다|됬어|됬어요)")),
+    ("eotteokhae_misspelling", re.compile(r"어떻해")),
+    ("anieyo_misspelling", re.compile(r"아니예요")),
+    ("myeochil_misspelling", re.compile(r"몇일")),
+    ("halge_misspelling", re.compile(r"[가-힣]ㄹ께|할께|갈께|볼께|줄께")),
+    ("oraenman_misspelling", re.compile(r"오랫만")),
+    ("geumse_misspelling", re.compile(r"금새")),
+    ("intent_l_euryeogo", re.compile(r"(할려고|갈려고|볼려고|쓸려고|살려고|만날려고|올려고|줄려고)")),
+    ("bound_noun_spacing", re.compile(r"(수있|수없|것같|거같|줄알|줄모르)")),
+    ("nonstandard_hante_spelling", re.compile(r"(나|너|저|걔|얘|쟤|우리|친구|엄마|아빠)한데")),
+)
+
+SIGNAL_DESCRIPTIONS = {
+    "duplicate_particle_sequence": "조사 중복 또는 어색한 조사 연쇄 후보",
+    "duplicate_connective": "연결어 반복 후보",
+    "sentence_ending_collision": "높임 종결과 반말 종결이 한 문장 안에서 충돌한 후보",
+    "nonstandard_polite_ending": "비표준적 높임 종결 후보",
+    "doe_dwae_confusion": "되/돼 계열 표기 오류 후보",
+    "eotteokhae_misspelling": "어떻게/어떡해 계열 표기 오류 후보",
+    "anieyo_misspelling": "아니에요 계열 표기 오류 후보",
+    "myeochil_misspelling": "며칠 계열 표기 오류 후보",
+    "halge_misspelling": "할게 계열 표기 오류 후보",
+    "oraenman_misspelling": "오랜만 계열 표기 오류 후보",
+    "geumse_misspelling": "금세 계열 표기 오류 후보",
+    "intent_l_euryeogo": "의도 표현의 -려고 결합 오류 후보",
+    "bound_noun_spacing": "의존 명사 띄어쓰기 오류 후보",
+    "nonstandard_hante_spelling": "한테/한데 혼동 후보",
+    "explicit_i_think": "한국어 대화에서 명시 주어와 생각한다 구문이 과하게 붙은 후보",
+    "thing_pronoun_overuse": "그것/이것/저것 직역투 후보",
+    "want_to_do_literalism": "영어식 want to 직역 후보",
+    "make_decision_literalism": "영어식 make a decision 직역 후보",
+    "have_problem_literalism": "영어식 have a problem 직역 후보",
+    "tell_me_literalism": "영어식 tell me 직역 후보",
+    "good_time_literalism": "영어식 have a good time 직역 후보",
+    "written_register_cluster": "대화보다 문어체 문장에 가까운 턴 밀집 후보",
+    "missing_short_reaction_turns": "짧은 반응 턴 부족 후보",
+    "explicit_pronoun_overuse": "명시 주어/대명사 과다 후보",
+}
 
 TRANSLATIONESE_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("explicit_i_think", re.compile(r"(나는|저는|제가|내가).{0,24}(생각한다|생각해요|생각합니다)")),
@@ -68,6 +109,17 @@ def make_hint(
     }
 
 
+def build_signal_catalog(hints: list[dict[str, Any]]) -> dict[str, str]:
+    signals: set[str] = set()
+    for hint in hints:
+        signals.update(str(signal) for signal in hint.get("signals", []))
+    return {
+        signal: SIGNAL_DESCRIPTIONS[signal]
+        for signal in sorted(signals)
+        if signal in SIGNAL_DESCRIPTIONS
+    }
+
+
 def build_korean_naturalness_hints(lines_to_review: Any) -> dict[str, Any]:
     lines = normalize_lines(lines_to_review)
     stripped = [strip_speaker_prefix(line) for line in lines]
@@ -95,6 +147,14 @@ def build_korean_naturalness_hints(lines_to_review: Any) -> dict[str, Any]:
         if ENDING_COLLISION_RE.search(line):
             grammar_refs.append(index)
             grammar_signals.append("sentence_ending_collision")
+        if NONSTANDARD_POLITE_ENDING_RE.search(line):
+            grammar_refs.append(index)
+            grammar_signals.append("nonstandard_polite_ending")
+
+        for signal, pattern in GRAMMAR_PATTERNS:
+            if pattern.search(line):
+                grammar_refs.append(index)
+                grammar_signals.append(signal)
 
         for signal, pattern in TRANSLATIONESE_PATTERNS:
             if pattern.search(line):
@@ -119,7 +179,7 @@ def build_korean_naturalness_hints(lines_to_review: Any) -> dict[str, Any]:
                 0.74,
                 grammar_signals,
                 grammar_refs,
-                "Possible particle, connective, or sentence-ending acceptability issue.",
+                "Possible grammar, spelling, particle, or sentence-ending acceptability issue.",
             )
         )
 
@@ -191,6 +251,7 @@ def build_korean_naturalness_hints(lines_to_review: Any) -> dict[str, Any]:
         },
         "axes": list(AXES),
         "hints": hints,
+        "signal_catalog": build_signal_catalog(hints),
         "note": "Hints are soft Korean naturalness signals. They are not final scores.",
     }
 

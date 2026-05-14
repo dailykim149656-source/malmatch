@@ -160,6 +160,7 @@ def main() -> int:
         assert "native_korean_idiom" in {
             hint["axis"] for hint in korean_naturalness["hints"]
         }
+        assert "duplicate_particle_sequence" in korean_naturalness["signal_catalog"]
 
         audit_package = call_tool(
             client,

@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from calibration_hints import build_calibration_hints
+from korean_naturalness_hints import build_korean_naturalness_hints
 
 
 PROTOCOL_VERSION = "2025-11-25"
@@ -51,6 +52,11 @@ RESOURCE_FILES = {
         "schemas/calibration_hint.schema.yaml",
         "text/yaml",
     ),
+    "malmatch://schemas/korean_naturalness_hint": (
+        "Korean Naturalness Hint Schema",
+        "schemas/korean_naturalness_hint.schema.yaml",
+        "text/yaml",
+    ),
     "malmatch://examples/good_bad_pairs": (
         "Synthetic Good/Bad Pairs",
         "examples/good_bad_pairs.yaml",
@@ -64,6 +70,10 @@ PROMPT_FILES = {
     "rewrite_lightly": ("Rewrite Lightly", "prompts/rewrite_lightly.md"),
     "character_voice_check": ("Character Voice Check", "prompts/character_voice_check.md"),
     "speech_level_check": ("Speech Level Check", "prompts/speech_level_check.md"),
+    "korean_naturalness_check": (
+        "Korean Naturalness Check",
+        "prompts/korean_naturalness_check.md",
+    ),
     "cringe_risk_check": ("Cringe Risk Check", "prompts/cringe_risk_check.md"),
 }
 
@@ -210,6 +220,19 @@ def tools_list_result() -> dict[str, Any]:
                 },
             },
             {
+                "name": "get_korean_naturalness_hints",
+                "title": "Get Korean Naturalness Hints",
+                "description": "Use this to get source-text-free hints for Korean grammar, idiom, and spoken rhythm.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "lines_to_review": {"type": ["string", "array"]},
+                    },
+                    "required": ["lines_to_review"],
+                    "additionalProperties": False,
+                },
+            },
+            {
                 "name": "prepare_dialogue_audit",
                 "title": "Prepare Dialogue Audit",
                 "description": "Use this to package user-provided scene, character, relationship, and lines with the Malmatch rubric.",
@@ -316,6 +339,7 @@ def get_overview() -> dict[str, Any]:
             "get_prompt_template",
             "prepare_dialogue_audit",
             "get_calibration_hints",
+            "get_korean_naturalness_hints",
             "get_examples",
         ],
     }
@@ -412,6 +436,16 @@ def get_calibration_hints(arguments: dict[str, Any]) -> dict[str, Any]:
     )
 
 
+def get_korean_naturalness_hints(arguments: dict[str, Any]) -> dict[str, Any]:
+    lines_to_review = arguments.get("lines_to_review")
+    if not lines_to_review:
+        return {
+            "error": "`lines_to_review` is required.",
+            "required": ["lines_to_review"],
+        }
+    return build_korean_naturalness_hints(lines_to_review)
+
+
 def prepare_dialogue_audit(arguments: dict[str, Any]) -> dict[str, Any]:
     scene = arguments.get("scene")
     lines_to_review = arguments.get("lines_to_review")
@@ -421,6 +455,7 @@ def prepare_dialogue_audit(arguments: dict[str, Any]) -> dict[str, Any]:
             "required": ["scene", "lines_to_review"],
         }
     calibration_hints = get_calibration_hints(arguments)
+    korean_naturalness_hints = get_korean_naturalness_hints(arguments)
     return {
         "task": "korean_dialogue_audit",
         "provided_input": {
@@ -436,9 +471,12 @@ def prepare_dialogue_audit(arguments: dict[str, Any]) -> dict[str, Any]:
         "prompt_template": read_text("prompts/dialogue_audit.md"),
         "output_schema_uri": "malmatch://schemas/evaluation_result",
         "calibration_schema_uri": "malmatch://schemas/calibration_hint",
+        "korean_naturalness_schema_uri": "malmatch://schemas/korean_naturalness_hint",
         "calibration_hints": calibration_hints,
+        "korean_naturalness_hints": korean_naturalness_hints,
         "guidance": [
             "Score all eight axes from 1 to 5.",
+            "Use Korean naturalness hints to inspect grammar, native idiom, and spoken rhythm under naturalness.",
             "Identify only issues grounded in the provided user lines and skill-pack rubric.",
             "Suggest minimal rewrites that preserve meaning, role, and relationship.",
             "Treat calibration hints as soft signals, not final scores.",
@@ -504,6 +542,7 @@ TOOL_HANDLERS = {
     "get_prompt_template": get_prompt_template,
     "get_examples": get_examples,
     "get_calibration_hints": get_calibration_hints,
+    "get_korean_naturalness_hints": get_korean_naturalness_hints,
     "prepare_dialogue_audit": prepare_dialogue_audit,
     "validate_skillpack": lambda args: validate_skillpack(),
 }

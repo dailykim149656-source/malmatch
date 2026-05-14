@@ -24,6 +24,9 @@
   - anachronism_risk:
   - genre_fit:
 - Findings:
+  - Korean naturalness:
+    - grammar_acceptability:
+    - native_korean_idiom:
+    - spoken_korean_rhythm:
 - Rewrite suggestion:
 - Keep unchanged:
-

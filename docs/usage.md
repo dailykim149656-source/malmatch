@@ -15,6 +15,7 @@
 ## 3. 프롬프트를 고른다
 
 - 전체 대사 검수: `prompts/dialogue_audit.md`
+- 한국어 자연스러움: `prompts/korean_naturalness_check.md`
 - 농담 적합성: `prompts/humor_pass.md`
 - 가벼운 수정: `prompts/rewrite_lightly.md`
 - 캐릭터 drift: `prompts/character_voice_check.md`
@@ -28,8 +29,8 @@
 
 ## 5. 보정 힌트는 참고 신호로만 쓴다
 
-MCP의 `prepare_dialogue_audit`와 `get_calibration_hints`는 길이, 어체 혼합, 관계선 위험 같은
-로컬 보정 힌트를 함께 반환할 수 있습니다.
+MCP의 `prepare_dialogue_audit`, `get_calibration_hints`, `get_korean_naturalness_hints`는
+길이, 어체 혼합, 관계선, 문법성, 번역투, 구어 리듬 위험 같은 로컬 보정 힌트를 함께 반환할 수 있습니다.
 이 힌트는 최종 점수가 아니라 검토 우선순위를 잡기 위한 참고 신호입니다.
 
 ## 6. 예시는 직접 확장한다

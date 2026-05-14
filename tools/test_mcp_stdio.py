@@ -94,6 +94,7 @@ def main() -> int:
         tool_names = {tool["name"] for tool in tools}
         assert "get_rubric" in tool_names
         assert "get_calibration_hints" in tool_names
+        assert "get_korean_naturalness_hints" in tool_names
         assert "prepare_dialogue_audit" in tool_names
 
         rubric = call_tool(client, "get_rubric")
@@ -103,6 +104,7 @@ def main() -> int:
         resource_uris = {resource["uri"] for resource in resources}
         assert "malmatch://docs/evaluation_rubric" in resource_uris
         assert "malmatch://schemas/calibration_hint" in resource_uris
+        assert "malmatch://schemas/korean_naturalness_hint" in resource_uris
 
         resource = assert_result(
             client.request("resources/read", {"uri": "malmatch://schemas/evaluation_result"})
@@ -114,6 +116,11 @@ def main() -> int:
             client.request("resources/read", {"uri": "malmatch://schemas/calibration_hint"})
         )
         assert "calibration_hints" in calibration_resource["contents"][0]["text"]
+
+        naturalness_resource = assert_result(
+            client.request("resources/read", {"uri": "malmatch://schemas/korean_naturalness_hint"})
+        )
+        assert "korean_naturalness_hints" in naturalness_resource["contents"][0]["text"]
 
         prompts = assert_result(client.request("prompts/list"))["prompts"]
         prompt_names = {prompt["name"] for prompt in prompts}
@@ -138,6 +145,22 @@ def main() -> int:
         assert calibration["basis"]["stored_text"] is False
         assert "hints" in calibration
 
+        korean_naturalness = call_tool(
+            client,
+            "get_korean_naturalness_hints",
+            {
+                "lines_to_review": [
+                    "A: 나는은 이것은 좋은 결정이라고 생각한다.",
+                    "B: 좋은 시간을 보내.",
+                ],
+            },
+        )
+        assert korean_naturalness["schema"] == "korean_naturalness_hints"
+        assert korean_naturalness["basis"]["stored_text"] is False
+        assert "native_korean_idiom" in {
+            hint["axis"] for hint in korean_naturalness["hints"]
+        }
+
         audit_package = call_tool(
             client,
             "prepare_dialogue_audit",
@@ -154,7 +177,12 @@ def main() -> int:
         assert audit_package["recommended_prompt"] == "dialogue_audit"
         assert "naturalness" in audit_package["rubric_axes"]
         assert audit_package["calibration_schema_uri"] == "malmatch://schemas/calibration_hint"
+        assert (
+            audit_package["korean_naturalness_schema_uri"]
+            == "malmatch://schemas/korean_naturalness_hint"
+        )
         assert audit_package["calibration_hints"]["schema"] == "calibration_hints"
+        assert audit_package["korean_naturalness_hints"]["schema"] == "korean_naturalness_hints"
 
         validation = call_tool(client, "validate_skillpack")
         assert validation["ok"] is True, validation

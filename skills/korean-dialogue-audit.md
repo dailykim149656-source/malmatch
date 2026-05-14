@@ -14,7 +14,7 @@ AI가 만든 한국어 대사가 장면, 캐릭터, 관계, 매체에 맞는지 
 
 ## Checks
 
-- Naturalness: 구어 리듬, 호흡, 설명 과잉
+- Naturalness: 문법성, 한국어다운 표현, 구어 리듬, 설명 과잉
 - Character Fit: 말 길이, 감정 노출, 단어 선택
 - Relationship Fit: 친밀도, 권력 거리, 장난 허용선
 - Speech Level Consistency: 반말, 해요체, 합쇼체, 반존대
@@ -26,4 +26,3 @@ AI가 만든 한국어 대사가 장면, 캐릭터, 관계, 매체에 맞는지 
 ## Output
 
 `schemas/evaluation_result.schema.yaml` 형식으로 점수와 근거, 수정 제안을 반환합니다.
-

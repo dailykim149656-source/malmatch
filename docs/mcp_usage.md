@@ -43,8 +43,9 @@ Use this command and args in a local MCP client:
 2. Call `get_rubric`.
 3. Call `get_prompt_template` with `dialogue_audit` or a narrower template.
 4. Call `get_calibration_hints` when you need length, speech-level, or boundary risk signals.
-5. Call `prepare_dialogue_audit` with the user-provided scene and lines.
-6. Optionally call `get_examples` for synthetic pattern references.
+5. Call `get_korean_naturalness_hints` when you need grammar, translationese, or spoken-rhythm signals.
+6. Call `prepare_dialogue_audit` with the user-provided scene and lines.
+7. Optionally call `get_examples` for synthetic pattern references.
 
 ## Available Tools
 
@@ -53,6 +54,7 @@ Use this command and args in a local MCP client:
 - `get_prompt_template`
 - `get_examples`
 - `get_calibration_hints`
+- `get_korean_naturalness_hints`
 - `prepare_dialogue_audit`
 - `validate_skillpack`
 

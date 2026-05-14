@@ -1,0 +1,27 @@
+schema: relationship_boundary
+version: 0.1
+description: 두 인물 사이의 허용 표현과 금지 표현 기준
+required:
+  - relationship_id
+  - characters
+  - intimacy
+  - power_distance
+  - default_speech_policy
+  - allowed_moves
+  - forbidden_moves
+fields:
+  relationship_id: string
+  characters: list[string]
+  intimacy:
+    enum: [strangers, distant, working, growing, close, strained]
+  power_distance:
+    enum: [equal, senior_to_junior, junior_to_senior, service_to_customer]
+  default_speech_policy:
+    enum: [banmal, haeyoche, hapsyoche, mixed_intentional]
+  allowed_moves: list[string]
+  forbidden_moves: list[string]
+  empathy_policy:
+    enum: [listen_first, validate_then_suggest, direct_solution, avoid_advice]
+  humor_policy:
+    enum: [none, light_reaction, teasing_allowed, dry_comment]
+

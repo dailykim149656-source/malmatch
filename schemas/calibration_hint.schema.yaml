@@ -1,0 +1,51 @@
+schema: calibration_hints
+version: 0.2
+description: 로컬 보정 레이어가 반환하는 원문 비포함 평가 힌트 형식
+required:
+  - basis
+  - thresholds
+  - input_metrics
+  - hints
+basis:
+  profile_loaded: boolean
+  profile_source: string
+  stored_text: boolean
+  source_text_values: string
+thresholds:
+  soft_max_chars: integer
+  hard_max_chars: integer
+  target_scene_min_turns: integer
+  target_scene_max_turns: integer
+input_metrics:
+  line_count: integer
+  total_chars: integer
+  avg_chars: number
+  max_chars: integer
+  speech_level_counts:
+    banmal: integer
+    haeyo: integer
+    hapsyo: integer
+    unknown: integer
+hint_fields:
+  - axis
+  - hint
+  - confidence
+  - signals
+  - line_refs
+  - rationale
+axis_values:
+  - naturalness
+  - character_fit
+  - relationship_fit
+  - speech_level_consistency
+  - humor_timing
+  - cringe_risk
+  - anachronism_risk
+  - genre_fit
+hint:
+  type: integer
+  allowed_values: [-1, 0, 1]
+confidence:
+  type: number
+  range: 0.0-0.99
+rule: 힌트는 최종 점수가 아니라 모델이 참고할 부드러운 보정 신호로만 사용한다.

@@ -1,0 +1,35 @@
+characters:
+  - character_id: calm_student
+    name: 차분한 학생
+    role: 단서를 천천히 확인하는 학생
+    default_speech_level: haeyoche
+    typical_line_length: short
+    emotional_openness: low
+    voice_traits:
+      - 관찰을 먼저 말한다
+      - 결론을 서두르지 않는다
+      - 감탄사를 적게 쓴다
+    humor_style:
+      - 낮은 톤의 사실 지적
+    avoid:
+      - 과한 열혈 반응
+      - 최신 유행어
+    source_basis:
+      - persona_turn_profile
+  - character_id: active_friend
+    name: 행동이 빠른 친구
+    role: 먼저 움직이고 나중에 확인하는 친구
+    default_speech_level: banmal
+    typical_line_length: medium
+    emotional_openness: high
+    voice_traits:
+      - 반응이 빠르다
+      - 짧은 재촉을 자주 한다
+      - 장난을 치지만 선은 넘지 않는다
+    humor_style:
+      - 가벼운 핀잔
+    avoid:
+      - 상대를 깎아내리는 조롱
+    source_basis:
+      - topic_dialogue_length_profile
+

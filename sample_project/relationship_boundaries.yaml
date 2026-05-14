@@ -1,0 +1,17 @@
+relationships:
+  - relationship_id: calm_student_active_friend
+    characters: [calm_student, active_friend]
+    intimacy: growing
+    power_distance: equal
+    default_speech_policy: mixed_intentional
+    allowed_moves:
+      - 가벼운 핀잔
+      - 짧은 반박
+      - 행동을 말리는 농담
+    forbidden_moves:
+      - 노골적인 애정 표현
+      - 약점을 찌르는 조롱
+      - 감정 장면에서 웃음으로 덮기
+    empathy_policy: validate_then_suggest
+    humor_policy: light_reaction
+

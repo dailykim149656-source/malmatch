@@ -1,0 +1,123 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+env/
+
+# Node / package tooling
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local agent/client config
+.codex/
+.claude/
+.mcp.json
+claude_desktop_config.json
+
+# Internal planning, analysis, and runtime state
+.omx/
+/korean_character_voice_prd.md
+/PRD.md
+/prd.md
+/docs/data_policy.md
+/docs/source_data_map.md
+
+# Raw/local dataset folders currently present in this workspace
+/011.일상대화 한국어 멀티세션 데이터/
+/018.감성대화/
+/020.주제별 텍스트 일상 대화 데이터/
+/044.페르소나 대화/
+/046.공감형 대화/
+/141.한국어 멀티세션 대화/
+/고려대학교/
+/한국어 감정 정보가 포함된 연속적 대화 데이터셋/
+/한국어 대화 데이터셋/
+/한국어 대화 요약/
+/한국어 어체 변환 코퍼스/
+
+# Future raw data locations
+/data/
+/datasets/
+/raw_data/
+/raw-data/
+/raw/
+/local_data/
+/source_data/
+/original_data/
+/private_data/
+/private_models/
+/calibration_data/
+/calibration_models/
+/corpora/
+/aihub/
+/AIHub/
+/AI_Hub/
+/nikl/
+/NIKL/
+/downloads/
+
+# Dataset/archive/media file types
+*.zip
+*.7z
+*.rar
+*.tar
+*.tar.gz
+*.tgz
+*.gz
+*.bz2
+*.xz
+*.zst
+*.parquet
+*.arrow
+*.feather
+*.sqlite
+*.sqlite3
+*.db
+*.csv
+*.tsv
+*.jsonl
+*.ndjson
+*.xlsx
+*.xls
+*.pkl
+*.pickle
+*.npy
+*.npz
+*.bin
+*.pt
+*.pth
+*.safetensors
+calibration_train.jsonl
+calibration_eval.jsonl
+calibrator.pkl
+calibrator.json
+*.pcm
+*.wav
+*.mp3
+*.mp4
+*.avi
+*.mov
+
+# Generated reports / local exports
+dist/
+build/
+coverage/
+tmp/
+temp/
+*.log

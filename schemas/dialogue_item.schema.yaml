@@ -1,0 +1,41 @@
+schema: dialogue_item
+version: 0.1
+description: 합성 good/bad pair 예시 형식
+required:
+  - id
+  - category
+  - scene
+  - character_context
+  - relationship_context
+  - bad_line
+  - good_line
+  - why_bad
+  - why_good
+  - risk_tags
+  - source_basis
+fields:
+  id: string
+  category:
+    enum:
+      - naturalness
+      - character_drift
+      - relationship_empathy_boundary
+      - speech_level
+      - humor_timing
+      - anachronism_genre
+  scene: string
+  character_context: string
+  relationship_context: string
+  bad_line: string
+  good_line: string
+  why_bad: string
+  why_good: string
+  risk_tags: list[string]
+  source_basis:
+    allowed:
+      - topic_dialogue_length_profile
+      - persona_turn_profile
+      - empathy_label_profile
+      - speech_level_parallel_profile
+      - summary_report_profile
+

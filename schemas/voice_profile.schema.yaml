@@ -1,0 +1,34 @@
+schema: voice_profile
+version: 0.1
+description: 캐릭터 말투와 감정 표현 기준을 적는 계약 문서
+required:
+  - character_id
+  - name
+  - role
+  - default_speech_level
+  - voice_traits
+  - avoid
+fields:
+  character_id: string
+  name: string
+  role: string
+  default_speech_level:
+    enum: [banmal, haeyoche, hapsyoche, mixed_intentional]
+  typical_line_length:
+    enum: [short, medium, long]
+  emotional_openness:
+    enum: [low, medium, high]
+  voice_traits:
+    type: list[string]
+  humor_style:
+    type: list[string]
+  avoid:
+    type: list[string]
+  source_basis:
+    type: list[string]
+    allowed:
+      - persona_turn_profile
+      - topic_dialogue_length_profile
+      - empathy_label_profile
+      - speech_level_parallel_profile
+

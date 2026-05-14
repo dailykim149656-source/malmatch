@@ -1,0 +1,334 @@
+# Synthetic examples only. None of these lines are copied from AI Hub, NIKL, or copyrighted works.
+version: 0.1
+items:
+  - id: nat-001
+    category: naturalness
+    scene: 동아리방에서 잃어버린 열쇠를 찾는 장면
+    character_context: 차분하게 단서를 보는 학생
+    relationship_context: 같은 동아리 친구, 아직 아주 친하지는 않음
+    bad_line: "현재 손잡이 근처의 먼지 분포를 통해 누군가가 이미 접촉했음을 확인할 수 있어요."
+    good_line: "손잡이 쪽 먼지만 비어 있어요. 누가 먼저 만졌나 봐요."
+    why_bad: 설명문처럼 길고 분석 보고서 톤이 강하다.
+    why_good: 관찰과 추론을 짧게 나눠 구어 리듬이 살아난다.
+    risk_tags: [over_explaining, stiff_korean]
+    source_basis: [topic_dialogue_length_profile]
+  - id: nat-002
+    category: naturalness
+    scene: 늦은 밤 편의점 앞에서 약속이 어긋난 장면
+    character_context: 미안하지만 방어적인 친구
+    relationship_context: 오래 알고 지낸 친구
+    bad_line: "내가 지각한 사유는 교통 상황과 예측 불가능한 변수 때문이었어."
+    good_line: "미안. 버스가 두 번이나 그냥 지나갔어."
+    why_bad: 사유, 변수 같은 단어가 일상 대화에 비해 딱딱하다.
+    why_good: 핑계처럼 들릴 위험은 있지만 사람이 바로 말할 법하다.
+    risk_tags: [stiff_korean, low_naturalness]
+    source_basis: [topic_dialogue_length_profile]
+  - id: nat-003
+    category: naturalness
+    scene: 게임 퀘스트 NPC가 짧게 힌트를 주는 장면
+    character_context: 산길을 지키는 경비병
+    relationship_context: 플레이어와 처음 만남
+    bad_line: "동굴 내부로 진입하기 전에 좌측에 위치한 낡은 표지판을 확인하는 것이 유리합니다."
+    good_line: "동굴로 가기 전, 왼쪽 낡은 표지판부터 보시오."
+    why_bad: 시스템 안내문처럼 들리고 인물의 입이 사라진다.
+    why_good: 정보는 유지하면서 경비병의 간결한 명령형 톤이 생긴다.
+    risk_tags: [npc_info_dump, genre_density]
+    source_basis: [topic_dialogue_length_profile]
+  - id: nat-004
+    category: naturalness
+    scene: 친구가 갑자기 약속을 취소하는 장면
+    character_context: 서운함을 바로 말하지 못하는 인물
+    relationship_context: 친하지만 요즘 어색한 친구
+    bad_line: "네 결정을 존중하지만 내 내면에는 약간의 실망감이 발생했어."
+    good_line: "알겠어. 근데 좀 서운하긴 하다."
+    why_bad: 감정을 설명하는 단어가 너무 추상적이다.
+    why_good: 짧고 직접적인 표현으로 감정이 자연스럽게 드러난다.
+    risk_tags: [emotion_telling, stiff_korean]
+    source_basis: [empathy_label_profile, topic_dialogue_length_profile]
+  - id: nat-005
+    category: naturalness
+    scene: 조사관이 목격자에게 짧게 다시 묻는 장면
+    character_context: 신중하지만 압박하지 않는 조사관
+    relationship_context: 공적인 첫 대면
+    bad_line: "방금 진술하신 내용의 시간적 순서를 재확인해 주실 수 있습니까?"
+    good_line: "방금 말씀하신 순서만 다시 확인해도 될까요?"
+    why_bad: 공식 문서에 가까운 표현이라 대화 호흡이 느리다.
+    why_good: 정중함을 유지하면서 실제 질문처럼 부드럽다.
+    risk_tags: [formal_overload, low_naturalness]
+    source_basis: [topic_dialogue_length_profile]
+  - id: nat-006
+    category: naturalness
+    scene: 초보 마법사가 실수를 감추려는 장면
+    character_context: 겁이 많고 말이 빨라지는 견습생
+    relationship_context: 선배 마법사에게 보고 중
+    bad_line: "이 현상은 제 의도와 다른 방향으로 전개되었지만 심각한 책임 회피는 아닙니다."
+    good_line: "일부러 그런 건 아니에요. 근데 좀 크게 터졌어요."
+    why_bad: 변명보다 보고서 문장처럼 들린다.
+    why_good: 겁먹은 캐릭터의 방어적 말투가 짧게 보인다.
+    risk_tags: [stiff_korean, character_blur]
+    source_basis: [persona_turn_profile]
+  - id: nat-007
+    category: naturalness
+    scene: 카페에서 주문이 잘못 나온 장면
+    character_context: 조심스럽게 말하는 손님
+    relationship_context: 점원과 처음 만남
+    bad_line: "제가 요청한 음료와 현재 제공된 음료 사이에 차이가 존재하는 것 같습니다."
+    good_line: "죄송한데요, 제가 시킨 거랑 조금 다른 것 같아요."
+    why_bad: 차이가 존재한다는 표현이 대화보다 문서에 가깝다.
+    why_good: 조심스러운 해요체로 상황을 자연스럽게 전달한다.
+    risk_tags: [formal_overload, speech_level]
+    source_basis: [speech_level_parallel_profile]
+  - id: nat-008
+    category: naturalness
+    scene: 팀원이 회의에서 의견을 조심스럽게 반박하는 장면
+    character_context: 신입 팀원
+    relationship_context: 선배와 회의 중
+    bad_line: "그 접근법은 장기적인 관점에서 부정적인 결과를 초래할 가능성이 농후합니다."
+    good_line: "그 방법은 나중에 좀 막힐 수도 있을 것 같습니다."
+    why_bad: 과하게 딱딱하고 신입의 조심스러운 톤이 약하다.
+    why_good: 정중함과 우려를 모두 유지한다.
+    risk_tags: [stiff_korean, genre_density]
+    source_basis: [topic_dialogue_length_profile, speech_level_parallel_profile]
+  - id: drift-001
+    category: character_drift
+    scene: 조용한 캐릭터가 단서를 발견하는 장면
+    character_context: 감정 표현이 낮고 관찰 중심인 학생
+    relationship_context: 친구와 함께 조사 중
+    bad_line: "우와, 대박! 이건 완전 운명이 우리한테 보내는 신호잖아!"
+    good_line: "여기 긁힌 자국이 있어요. 새로 난 것 같습니다."
+    why_bad: 평소 낮은 감정 표현과 맞지 않고 장르 톤도 튄다.
+    why_good: 관찰 중심의 짧은 발화로 캐릭터 보이스가 유지된다.
+    risk_tags: [voice_drift, emotional_overrun]
+    source_basis: [persona_turn_profile]
+  - id: drift-002
+    category: character_drift
+    scene: 냉정한 용병이 보상을 협상하는 장면
+    character_context: 짧고 실리적인 말을 선호함
+    relationship_context: 의뢰인과 계약 전 대화
+    bad_line: "제 마음속 깊은 곳에서는 당신의 사연이 파도처럼 밀려오고 있습니다."
+    good_line: "사연은 알겠소. 보수부터 정합시다."
+    why_bad: 감정적 비유가 캐릭터의 실리적 태도와 충돌한다.
+    why_good: 공감은 최소화하고 목적을 바로 제시한다.
+    risk_tags: [voice_drift, melodrama]
+    source_basis: [persona_turn_profile]
+  - id: drift-003
+    category: character_drift
+    scene: 활발한 친구가 침묵한 상대를 재촉하는 장면
+    character_context: 행동이 빠르고 반응이 큰 친구
+    relationship_context: 친한 동급생
+    bad_line: "네 침묵의 의미를 충분히 숙고할 시간이 우리에게 필요하다고 생각해."
+    good_line: "왜 말이 없어? 뭐라도 봤어?"
+    why_bad: 캐릭터의 속도감이 사라지고 지나치게 사색적이다.
+    why_good: 빠른 반응과 짧은 질문이 인물 성격에 맞다.
+    risk_tags: [voice_drift, slow_pacing]
+    source_basis: [persona_turn_profile, topic_dialogue_length_profile]
+  - id: drift-004
+    category: character_drift
+    scene: 노련한 선장이 폭풍을 보는 장면
+    character_context: 경험 많고 과장하지 않는 선장
+    relationship_context: 선원들에게 지시함
+    bad_line: "여러분, 이 시련은 우리의 영혼을 시험하는 위대한 무대입니다."
+    good_line: "돛부터 접어라. 말은 그다음에 하자."
+    why_bad: 위대한 무대 같은 표현이 상황과 직업 톤에서 뜬다.
+    why_good: 경험자의 우선순위와 짧은 명령이 보인다.
+    risk_tags: [melodrama, character_blur]
+    source_basis: [persona_turn_profile]
+  - id: drift-005
+    category: character_drift
+    scene: 소심한 인물이 사과하는 장면
+    character_context: 직접적인 충돌을 피함
+    relationship_context: 친구에게 실수한 뒤
+    bad_line: "그래, 내가 잘못했어. 이제 됐지? 더 따질 거 있어?"
+    good_line: "미안해. 변명하려던 건 아닌데, 그렇게 들렸겠다."
+    why_bad: 공격적인 반응이 소심한 프로필과 맞지 않는다.
+    why_good: 사과와 자기 방어가 약하게 섞여 캐릭터와 맞다.
+    risk_tags: [voice_drift, relationship_tone]
+    source_basis: [persona_turn_profile, empathy_label_profile]
+  - id: drift-006
+    category: character_drift
+    scene: 지식이 많은 캐릭터가 위험을 설명하는 장면
+    character_context: 설명은 잘하지만 겁을 주지 않으려 함
+    relationship_context: 동료에게 짧게 경고
+    bad_line: "이 장치는 복합적인 마력 반응으로 인해 다층적 재앙을 유발할 수 있습니다."
+    good_line: "이건 건드리지 마세요. 반응이 한 번에 튈 수 있어요."
+    why_bad: 정보량이 많고 위험이 구체적으로 체감되지 않는다.
+    why_good: 전문성을 유지하되 행동 지시가 먼저 온다.
+    risk_tags: [over_explaining, voice_drift]
+    source_basis: [persona_turn_profile, topic_dialogue_length_profile]
+  - id: rel-001
+    category: relationship_empathy_boundary
+    scene: 친구가 시험을 망쳤다고 털어놓는 장면
+    character_context: 현실적인 조언을 좋아하는 친구
+    relationship_context: 친한 친구지만 지금은 위로가 필요한 순간
+    bad_line: "그러니까 내가 계획표 만들라고 했잖아. 이제라도 정신 차리면 돼."
+    good_line: "속상하겠다. 오늘은 좀 쉬고, 내일 같이 정리해 보자."
+    why_bad: 공감보다 훈계가 먼저 나와 관계선이 거칠어진다.
+    why_good: 감정 확인 뒤 제안을 늦게 붙인다.
+    risk_tags: [advice_too_soon, empathy_gap]
+    source_basis: [empathy_label_profile]
+  - id: rel-002
+    category: relationship_empathy_boundary
+    scene: 동료가 실수를 고백하는 장면
+    character_context: 침착한 팀 리더
+    relationship_context: 업무상 상하 관계
+    bad_line: "괜찮아요, 아무 문제 없어요. 다 제가 해 드릴게요."
+    good_line: "일단 어디까지 진행됐는지 봅시다. 해결할 수 있는 것부터 나누죠."
+    why_bad: 문제를 덮고 책임을 대신 떠안아 업무 관계가 흐려진다.
+    why_good: 감정 과잉 없이 해결 순서를 제시한다.
+    risk_tags: [over_empathy, boundary_blur]
+    source_basis: [empathy_label_profile, summary_report_profile]
+  - id: rel-003
+    category: relationship_empathy_boundary
+    scene: 초면인 NPC가 플레이어의 상처를 보고 말하는 장면
+    character_context: 마을 약사
+    relationship_context: 처음 만난 손님
+    bad_line: "당신이 얼마나 외롭고 아팠는지 제 마음이 전부 이해해요."
+    good_line: "상처가 깊군요. 먼저 붕대부터 갈겠습니다."
+    why_bad: 초면에 감정적 친밀도가 너무 높다.
+    why_good: 직업적 돌봄을 먼저 보여 관계 거리를 지킨다.
+    risk_tags: [false_intimacy, over_empathy]
+    source_basis: [empathy_label_profile]
+  - id: rel-004
+    category: relationship_empathy_boundary
+    scene: 상급자가 하급자의 긴장을 풀어 주는 장면
+    character_context: 엄격하지만 배려 있는 상급자
+    relationship_context: 위계가 있는 직장 관계
+    bad_line: "야, 그렇게 얼어 있으면 귀엽긴 한데 일은 못 하겠다?"
+    good_line: "긴장한 건 알겠네. 그래도 보고는 천천히 해도 된다."
+    why_bad: 농담이 사적인 평가처럼 들리고 위계상 부담스럽다.
+    why_good: 긴장을 인정하되 업무 맥락을 유지한다.
+    risk_tags: [power_distance, unsafe_teasing]
+    source_basis: [empathy_label_profile, speech_level_parallel_profile]
+  - id: rel-005
+    category: relationship_empathy_boundary
+    scene: 갈등 직후 한 인물이 화해를 시도하는 장면
+    character_context: 감정 표현에 서툰 인물
+    relationship_context: 오래된 친구와 다툰 뒤
+    bad_line: "우리의 유대는 이 정도 감정적 소모로 무너지지 않아."
+    good_line: "아까 말은 심했어. 그건 미안해."
+    why_bad: 관계를 설명하지만 실제 사과가 늦다.
+    why_good: 짧은 인정과 사과가 먼저 와 관계 회복에 맞다.
+    risk_tags: [emotion_telling, repair_delay]
+    source_basis: [empathy_label_profile, topic_dialogue_length_profile]
+  - id: rel-006
+    category: relationship_empathy_boundary
+    scene: 고객이 화난 상태로 문의하는 장면
+    character_context: 안내형 브랜드 캐릭터
+    relationship_context: 서비스 제공자와 고객
+    bad_line: "고객님이 너무 예민하게 받아들이신 것 같습니다."
+    good_line: "불편하셨겠습니다. 먼저 주문 기록부터 확인하겠습니다."
+    why_bad: 감정을 평가해 방어적으로 들린다.
+    why_good: 감정 인정 뒤 확인 행동으로 넘어간다.
+    risk_tags: [blame_shift, service_tone]
+    source_basis: [empathy_label_profile, speech_level_parallel_profile]
+  - id: speech-001
+    category: speech_level
+    scene: 신입이 선배에게 보고하는 장면
+    character_context: 조심스러운 신입
+    relationship_context: 직장 선후배
+    bad_line: "선배, 이거 봤어? 제가 방금 정리했거든."
+    good_line: "선배님, 이거 확인해 보셨나요? 제가 방금 정리했습니다."
+    why_bad: 반말과 존댓말이 섞여 위계가 흔들린다.
+    why_good: 해요체와 합쇼체를 상황에 맞게 정돈한다.
+    risk_tags: [speech_level_mismatch]
+    source_basis: [speech_level_parallel_profile]
+  - id: speech-002
+    category: speech_level
+    scene: 친한 친구가 늦게 온 상대를 타박하는 장면
+    character_context: 직설적인 친구
+    relationship_context: 오래된 친구
+    bad_line: "왜 이렇게 늦으셨습니까. 제가 기다렸잖아요."
+    good_line: "왜 이렇게 늦었어. 나 계속 기다렸잖아."
+    why_bad: 지나치게 격식적이라 친한 관계의 리듬이 깨진다.
+    why_good: 반말 관계에 맞게 짧고 직접적이다.
+    risk_tags: [over_formal, relationship_fit]
+    source_basis: [speech_level_parallel_profile]
+  - id: speech-003
+    category: speech_level
+    scene: 왕궁 경비가 방문객을 막는 장면
+    character_context: 규율을 중시하는 경비
+    relationship_context: 공적 관계
+    bad_line: "잠깐, 여기 들어오면 안 돼요. 좀 물러나 줄래?"
+    good_line: "멈추십시오. 허가 없이는 들어가실 수 없습니다."
+    why_bad: 공적 경비 상황에 비해 말투가 가볍다.
+    why_good: 합쇼체로 권한과 거리감을 명확히 한다.
+    risk_tags: [under_formal, genre_fit]
+    source_basis: [speech_level_parallel_profile]
+  - id: speech-004
+    category: speech_level
+    scene: 친밀해진 두 인물이 처음으로 말을 놓는 장면
+    character_context: 조심스럽지만 마음을 연 인물
+    relationship_context: 가까워지는 동료
+    bad_line: "이제 우리 친하니까 그냥 반말할게. 됐지?"
+    good_line: "혹시 괜찮으면, 이제 말 좀 편하게 해도 될까요?"
+    why_bad: 친밀도 전환을 일방적으로 처리한다.
+    why_good: 상대 동의를 구해 반존대 전환이 자연스럽다.
+    risk_tags: [forced_intimacy, speech_shift]
+    source_basis: [speech_level_parallel_profile, relationship_empathy_boundary]
+  - id: speech-005
+    category: speech_level
+    scene: 상담형 캐릭터가 사용자의 불안을 듣는 장면
+    character_context: 차분한 안내자
+    relationship_context: 도움을 주는 낯선 인물
+    bad_line: "그랬구나. 너 진짜 힘들었겠다, 내가 다 해결해 줄게."
+    good_line: "많이 불안하셨겠어요. 지금 가장 급한 것부터 같이 정리해 볼까요?"
+    why_bad: 반말과 과도한 책임 약속이 낯선 관계에 맞지 않는다.
+    why_good: 해요체로 거리를 지키고 도움 범위를 제한한다.
+    risk_tags: [speech_level_mismatch, over_promise]
+    source_basis: [speech_level_parallel_profile, empathy_label_profile]
+  - id: humor-001
+    category: humor_timing
+    scene: 위험한 문 앞에서 함정을 발견한 장면
+    character_context: 장난기 있지만 상황 판단은 빠른 친구
+    relationship_context: 함께 탐험하는 동료
+    bad_line: "하하, 이 문 만든 사람 센스 진짜 별로다. 우리도 터져 볼까?"
+    good_line: "잠깐. 농담은 살고 나서 하자."
+    why_bad: 위험 장면을 농담으로 덮어 긴장감이 깨진다.
+    why_good: 짧은 반응으로 캐릭터의 장난기와 긴장을 같이 살린다.
+    risk_tags: [humor_timing, tension_break]
+    source_basis: [topic_dialogue_length_profile]
+  - id: humor-002
+    category: humor_timing
+    scene: 친구가 진심으로 사과하는 장면
+    character_context: 평소 농담을 자주 하는 인물
+    relationship_context: 다툰 뒤 화해 직전
+    bad_line: "괜찮아, 네 사과 점수는 72점 정도야."
+    good_line: "알겠어. 나도 바로 웃어넘기긴 어렵지만, 들었어."
+    why_bad: 사과의 무게를 점수 농담으로 낮춘다.
+    why_good: 농담을 줄이고 감정 회복의 시간을 남긴다.
+    risk_tags: [joke_over_emotion, repair_scene]
+    source_basis: [empathy_label_profile]
+  - id: humor-003
+    category: humor_timing
+    scene: 게임 튜토리얼 NPC가 실패한 플레이어를 격려하는 장면
+    character_context: 친절하지만 말이 짧은 조교
+    relationship_context: 안내자와 플레이어
+    bad_line: "실패도 예술이라면 지금 아주 대작을 만드셨네요."
+    good_line: "괜찮습니다. 이번엔 방패를 먼저 들어 보세요."
+    why_bad: 실패 직후의 농담이 조롱처럼 들릴 수 있다.
+    why_good: 감정 소모 없이 다음 행동을 안내한다.
+    risk_tags: [unsafe_teasing, tutorial_tone]
+    source_basis: [summary_report_profile, topic_dialogue_length_profile]
+  - id: genre-001
+    category: anachronism_genre
+    scene: 중세풍 마을에서 장인이 물건을 설명하는 장면
+    character_context: 오래된 공방의 장인
+    relationship_context: 손님에게 물건을 보여 줌
+    bad_line: "이 검은 가성비가 좋아서 초보자 빌드에 딱 맞습니다."
+    good_line: "처음 검을 잡는 이에게는 이 정도 무게가 알맞소."
+    why_bad: 가성비와 빌드가 세계관 밖의 표현이다.
+    why_good: 같은 정보를 장르 안의 어휘로 바꾼다.
+    risk_tags: [anachronism, genre_fit]
+    source_basis: [topic_dialogue_length_profile]
+  - id: genre-002
+    category: anachronism_genre
+    scene: 모바일 게임 선택지에서 조력자가 임무를 설명하는 장면
+    character_context: 실용적인 조력자
+    relationship_context: 플레이어에게 짧게 안내
+    bad_line: "이번 작전의 정치적 함의와 역사적 배경을 순차적으로 설명하겠습니다."
+    good_line: "목표는 하나입니다. 북문을 열고 사람들을 빼내세요."
+    why_bad: 선택지 전 장면에 비해 정보 밀도가 너무 높다.
+    why_good: 플레이어가 바로 행동할 수 있는 정보만 남긴다.
+    risk_tags: [genre_density, over_explaining]
+    source_basis: [summary_report_profile, topic_dialogue_length_profile]
+

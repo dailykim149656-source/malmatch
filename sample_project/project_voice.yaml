@@ -1,0 +1,10 @@
+project_id: sample-campus-mystery
+medium: game_dialogue
+genre: soft_mystery
+default_rules:
+  line_density: short_to_medium
+  humor_policy: reaction_first
+  source_basis:
+    - topic_dialogue_length_profile
+    - persona_turn_profile
+

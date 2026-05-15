@@ -3,7 +3,7 @@
 # 말매치 Malmatch
 
 말매치 Malmatch는 한국어 캐릭터 대사를 검수하기 위한 로컬 MCP 스킬팩입니다.
-대사를 생성하는 모델이 아니라, Codex, Claude Code, Claude Desktop 같은 MCP 클라이언트가 참고할 루브릭, 프롬프트, 스키마, 합성 예시, 보정 힌트를 제공합니다.
+대사를 생성하는 모델이 아니라, Codex, Claude Code, Claude Desktop 같은 MCP 클라이언트가 참고할 루브릭, 프롬프트, 스키마, 합성 예시, 보정 힌트, 로컬 데이터셋 기준을 제공합니다.
 
 ## 언제 쓰나요
 
@@ -83,9 +83,11 @@ get_rubric과 prepare_dialogue_audit 기준으로 평가하고, 필요한 경우
 | `get_skillpack_overview` | 스킬팩 사용 흐름 확인 |
 | `get_rubric` | 8개 평가 축 불러오기 |
 | `get_prompt_template` | 검수, 리라이트, 농담, 어체 체크 프롬프트 불러오기 |
-| `get_examples` | 합성 good/bad 예시 조회 |
+| `get_dataset_guidance` | 로컬 비공개 패턴 뱅크 기반 상황별 데이터셋 힌트 생성, 기본값은 balanced 기준 |
+| `get_examples` | 작은 합성 good/bad 패턴 카드 조회. 대량 보정 기준은 `get_dataset_guidance`가 담당 |
+| `get_text_metrics` | NFC 문자 수, 공백 제외 문자 수, UTF-8 바이트, NEIS식 바이트 지표 계산 |
 | `get_calibration_hints` | 길이, 어체, 관계선, 한국어 예의 맥락 위험에 대한 로컬 보정 힌트 생성 |
-| `get_korean_naturalness_hints` | 문법성, 번역투, 한국어 구어 리듬 힌트 생성 |
+| `get_korean_naturalness_hints` | 문법성, 맞춤법/띄어쓰기 후보, 번역투, 한국어 구어 리듬 힌트 생성 |
 | `prepare_dialogue_audit` | 장면, 캐릭터, 관계, 대사를 검수 패키지로 조립 |
 | `validate_skillpack` | 로컬 파일과 예시 구조 기본 검증 |
 
@@ -105,8 +107,11 @@ get_rubric과 prepare_dialogue_audit 기준으로 평가하고, 필요한 경우
 ## 파일 구성
 
 - `tools/korean_character_voice_mcp.py`: 로컬 stdio MCP 서버
+- `tools/build_private_pattern_bank.py`: 로컬 AI Hub 데이터셋을 원문 없는 비공개 패턴 뱅크로 변환
+- `tools/dataset_guidance.py`: 비공개 패턴 뱅크 기반 상황별 보정 힌트 엔진
+- `tools/text_metrics.py`: 원문을 저장하지 않는 로컬 문자 수와 바이트 지표 엔진
 - `tools/calibration_hints.py`: 원문을 저장하지 않는 로컬 보정 힌트 엔진
-- `tools/korean_naturalness_hints.py`: 문법성, 번역투, 한국어 구어 리듬 힌트 엔진
+- `tools/korean_naturalness_hints.py`: 문법성, 맞춤법/띄어쓰기, 번역투, 한국어 구어 리듬 힌트 엔진
 - `docs/evaluation_rubric.md`: 평가 루브릭
 - `docs/usage.md`: 기본 사용법
 - `docs/mcp_usage.md`: MCP 연결 참고
@@ -117,7 +122,29 @@ get_rubric과 prepare_dialogue_audit 기준으로 평가하고, 필요한 경우
 ## 참고
 
 - 이 서버는 로컬 stdio MCP 서버입니다. ChatGPT나 Claude.ai의 클라우드 connector에서 쓰려면 별도 원격 MCP 서버로 감싸야 합니다.
-- 예시는 직접 작성한 합성 패턴 예시입니다.
+- 예시는 직접 작성한 작은 합성 패턴 카드입니다. 대량 기준 보정은 `.malmatch/private_pattern_bank.json`을 만든 뒤 `get_dataset_guidance`로 사용합니다.
+- 대사 길이 판단은 `get_text_metrics`의 NFC 문자 수와 바이트 지표를 기준으로 보정합니다. 외부 맞춤법 검사기나 웹 API는 사용하지 않습니다.
+- 맞춤법/문법 힌트는 로컬 규칙 기반 후보 신호입니다. 원문과 교정문 전문을 저장하거나 MCP 리소스로 노출하지 않습니다.
+- 비공개 패턴 뱅크는 원문 문장을 저장하지 않는 로컬 산출물이며 git에 포함하지 않습니다.
+- 데이터셋 기반 설계의 공개 배포 원칙은 [데이터셋 사용과 공개 배포 원칙](docs/dataset_distribution.md)을 따릅니다. 원본 데이터와 `.malmatch/*.json` 내부 분석 산출물은 공개 repo, 릴리스, 패키지에 포함하지 않습니다.
+
+비공개 패턴 뱅크 생성:
+
+```bash
+python tools/dataset_inventory.py --root . --out .malmatch/data_inventory.json
+python tools/build_private_pattern_bank.py --inventory .malmatch/data_inventory.json --out .malmatch/private_pattern_bank.json
+```
+
+기본 생성은 zip 내부의 지원 엔트리를 끝까지 읽는 전체 스캔입니다. 빠르게 동작만 확인하려면
+다음처럼 샘플 제한을 둘 수 있습니다.
+
+```bash
+python tools/build_private_pattern_bank.py --inventory .malmatch/data_inventory.json --out .malmatch/private_pattern_bank.json --max-entries-per-zip 500
+```
+
+MCP의 `get_dataset_guidance`와 `prepare_dialogue_audit`는 기본적으로 `balanced` 기준을 사용합니다.
+이 기준은 큰 데이터셋 하나가 전체 판단을 압도하지 않도록 데이터셋별 통계를 같은 가중치로 평균 냅니다.
+필요하면 `baseline_mode: "raw"`로 전체 raw 빈도 기준을 직접 볼 수 있습니다.
 
 ## 출처
 

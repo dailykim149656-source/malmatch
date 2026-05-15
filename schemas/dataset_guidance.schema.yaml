@@ -1,0 +1,44 @@
+schema: dataset_guidance
+version: 0.1
+description: 비공개 패턴 뱅크 기반 데이터셋 보정 힌트 형식
+required:
+  - bank_loaded
+  - requested_baseline_mode
+  - baseline_mode
+  - baseline_source
+  - matched_contexts
+  - input_metrics
+  - guidance
+  - signal_catalog
+  - source_basis
+  - source_text_values
+baseline_modes:
+  - balanced
+  - raw
+fallback_modes:
+  - legacy_raw
+  - none
+input_metrics:
+  line_count: integer
+  total_chars: integer
+  avg_chars: number
+  max_chars: integer
+  speech_level_counts: object
+  act_counts: object
+guidance_fields:
+  - axis
+  - signal
+  - confidence
+  - matched_contexts
+  - basis
+  - rationale
+  - recommended_check
+signal_values:
+  - customer_complaint_refusal
+  - formal_request_directness
+  - empathy_advice_timing
+  - speech_level_context_mismatch
+  - dialogue_density_outlier
+  - bank_unavailable
+  - empty_input
+rule: 원문 데이터셋 문장은 포함하지 않고, 비공개 패턴 뱅크의 집계 기준만 반환한다.

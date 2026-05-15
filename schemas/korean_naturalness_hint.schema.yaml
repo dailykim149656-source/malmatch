@@ -1,5 +1,5 @@
 schema: korean_naturalness_hints
-version: 0.3.1
+version: 0.4.0
 description: 한국어 문법성, 한국어다운 표현, 구어 리듬 보정 힌트 형식
 required:
   - basis
@@ -16,6 +16,7 @@ input_metrics:
   total_chars: integer
   avg_chars: number
   max_chars: integer
+  text_metrics: text_metrics object
   short_reaction_count: integer
   written_sentence_count: integer
   explicit_pronoun_count: integer
@@ -37,6 +38,10 @@ signal_catalog:
   type: object
   key: signal id string
   value: source-text-free Korean description for the triggered signal
+suggestion_catalog:
+  type: object
+  key: signal id string
+  value: source-text-free suggestion category and rationale
 confidence:
   type: number
   range: 0.0-0.99

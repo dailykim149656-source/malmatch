@@ -1,5 +1,5 @@
 schema: calibration_hints
-version: 0.2.1
+version: 0.2.2
 description: 로컬 보정 레이어가 반환하는 원문 비포함 평가 힌트 형식
 required:
   - basis
@@ -22,6 +22,7 @@ input_metrics:
   total_chars: integer
   avg_chars: number
   max_chars: integer
+  text_metrics: text_metrics object
   speech_level_counts:
     banmal: integer
     haeyo: integer

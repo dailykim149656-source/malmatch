@@ -24,6 +24,9 @@
   - anachronism_risk:
   - genre_fit:
 - Findings:
+  - Dataset guidance:
+    - matched_contexts:
+    - dataset_signals:
   - Korean naturalness:
     - grammar_acceptability:
     - native_korean_idiom:

@@ -28,6 +28,8 @@ def test_mixed_speech_and_relationship_hints() -> None:
     assert result["basis"]["stored_text"] is False
     assert result["basis"]["profile_source"] == "built_in_defaults"
     assert result["input_metrics"]["line_count"] == 3
+    assert result["input_metrics"]["text_metrics"]["schema"] == "text_metrics"
+    assert result["input_metrics"]["total_chars"] == result["input_metrics"]["text_metrics"]["total_nfc_chars"]
 
     serialized = json.dumps(result, ensure_ascii=False)
     for source_fragment in ["고객님", "운명이야", "해결해 드릴게요"]:

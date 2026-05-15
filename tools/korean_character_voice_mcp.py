@@ -11,13 +11,17 @@ from pathlib import Path
 from typing import Any
 
 from calibration_hints import build_calibration_hints
+from dataset_guidance import build_dataset_guidance
 from korean_naturalness_hints import build_korean_naturalness_hints
+from text_metrics import build_text_metrics
 
 
 PROTOCOL_VERSION = "2025-11-25"
 SERVER_NAME = "malmatch"
 SERVER_VERSION = "0.1.0"
 ROOT = Path(__file__).resolve().parents[1]
+LOCAL_STATE_DIR = ROOT / ".malmatch"
+LEGACY_STATE_DIR = ROOT / ".omx"
 
 RESOURCE_FILES = {
     "malmatch://README": ("README", "README.md", "text/markdown"),
@@ -55,6 +59,16 @@ RESOURCE_FILES = {
     "malmatch://schemas/korean_naturalness_hint": (
         "Korean Naturalness Hint Schema",
         "schemas/korean_naturalness_hint.schema.yaml",
+        "text/yaml",
+    ),
+    "malmatch://schemas/text_metrics": (
+        "Text Metrics Schema",
+        "schemas/text_metrics.schema.yaml",
+        "text/yaml",
+    ),
+    "malmatch://schemas/dataset_guidance": (
+        "Dataset Guidance Schema",
+        "schemas/dataset_guidance.schema.yaml",
         "text/yaml",
     ),
     "malmatch://examples/good_bad_pairs": (
@@ -112,6 +126,13 @@ def read_text(relative_path: str) -> str:
     if not path.exists():
         raise JsonRpcError(-32602, f"Missing resource file: {relative_path}")
     return path.read_text(encoding="utf-8")
+
+
+def local_state_file(name: str) -> Path:
+    primary = LOCAL_STATE_DIR / name
+    if primary.exists():
+        return primary
+    return LEGACY_STATE_DIR / name
 
 
 def write_response(payload: dict[str, Any]) -> None:
@@ -233,6 +254,43 @@ def tools_list_result() -> dict[str, Any]:
                 },
             },
             {
+                "name": "get_text_metrics",
+                "title": "Get Text Metrics",
+                "description": "Use this to get deterministic, source-text-free Korean dialogue length and byte metrics.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "lines_to_review": {"type": ["string", "array", "object"]},
+                        "strip_speakers": {"type": "boolean", "default": True},
+                    },
+                    "required": ["lines_to_review"],
+                    "additionalProperties": False,
+                },
+            },
+            {
+                "name": "get_dataset_guidance",
+                "title": "Get Dataset Guidance",
+                "description": "Use this to get source-text-free guidance from the local private pattern bank.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "scene": {"type": "string"},
+                        "medium": {"type": "string"},
+                        "genre": {"type": "string"},
+                        "character_profiles": {"type": ["string", "array", "object"]},
+                        "relationship_boundaries": {"type": ["string", "array", "object"]},
+                        "lines_to_review": {"type": ["string", "array"]},
+                        "baseline_mode": {
+                            "type": "string",
+                            "enum": ["balanced", "raw"],
+                            "default": "balanced",
+                        },
+                    },
+                    "required": ["lines_to_review"],
+                    "additionalProperties": False,
+                },
+            },
+            {
                 "name": "prepare_dialogue_audit",
                 "title": "Prepare Dialogue Audit",
                 "description": "Use this to package user-provided scene, character, relationship, and lines with the Malmatch rubric.",
@@ -245,6 +303,11 @@ def tools_list_result() -> dict[str, Any]:
                         "character_profiles": {"type": ["string", "array", "object"]},
                         "relationship_boundaries": {"type": ["string", "array", "object"]},
                         "lines_to_review": {"type": ["string", "array"]},
+                        "baseline_mode": {
+                            "type": "string",
+                            "enum": ["balanced", "raw"],
+                            "default": "balanced",
+                        },
                     },
                     "required": ["scene", "lines_to_review"],
                     "additionalProperties": False,
@@ -331,14 +394,18 @@ def get_overview() -> dict[str, Any]:
             "Load character voice and relationship boundary context.",
             "Select the relevant prompt template.",
             "Apply the eight-axis rubric.",
+            "Use balanced private pattern bank guidance when available.",
+            "Use deterministic text metrics for line length and byte-budget checks.",
             "Use calibration hints for Korean politeness, relationship boundaries, and speech-level risk.",
-            "Use synthetic examples only as pattern references.",
+            "Use synthetic examples only as compact pattern references.",
             "Return minimal rewrites that preserve meaning and character function.",
         ],
         "recommended_tools": [
             "get_rubric",
             "get_prompt_template",
             "prepare_dialogue_audit",
+            "get_dataset_guidance",
+            "get_text_metrics",
             "get_calibration_hints",
             "get_korean_naturalness_hints",
             "get_examples",
@@ -429,7 +496,7 @@ def get_calibration_hints(arguments: dict[str, Any]) -> dict[str, Any]:
         }
     return build_calibration_hints(
         lines_to_review,
-        profile_path=ROOT / ".omx" / "pattern_profile.json",
+        profile_path=local_state_file("pattern_profile.json"),
         scene=str(arguments.get("scene", "")),
         medium=str(arguments.get("medium", "")),
         genre=str(arguments.get("genre", "")),
@@ -448,6 +515,38 @@ def get_korean_naturalness_hints(arguments: dict[str, Any]) -> dict[str, Any]:
     return build_korean_naturalness_hints(lines_to_review)
 
 
+def get_text_metrics(arguments: dict[str, Any]) -> dict[str, Any]:
+    lines_to_review = arguments.get("lines_to_review")
+    if not lines_to_review:
+        return {
+            "error": "`lines_to_review` is required.",
+            "required": ["lines_to_review"],
+        }
+    return build_text_metrics(
+        lines_to_review,
+        strip_speakers=bool(arguments.get("strip_speakers", True)),
+    )
+
+
+def get_dataset_guidance(arguments: dict[str, Any]) -> dict[str, Any]:
+    lines_to_review = arguments.get("lines_to_review")
+    if not lines_to_review:
+        return {
+            "error": "`lines_to_review` is required.",
+            "required": ["lines_to_review"],
+        }
+    return build_dataset_guidance(
+        bank_path=local_state_file("private_pattern_bank.json"),
+        scene=str(arguments.get("scene", "")),
+        medium=str(arguments.get("medium", "")),
+        genre=str(arguments.get("genre", "")),
+        character_profiles=arguments.get("character_profiles", ""),
+        relationship_boundaries=arguments.get("relationship_boundaries", ""),
+        lines_to_review=lines_to_review,
+        baseline_mode=str(arguments.get("baseline_mode", "balanced")),
+    )
+
+
 def prepare_dialogue_audit(arguments: dict[str, Any]) -> dict[str, Any]:
     scene = arguments.get("scene")
     lines_to_review = arguments.get("lines_to_review")
@@ -456,8 +555,10 @@ def prepare_dialogue_audit(arguments: dict[str, Any]) -> dict[str, Any]:
             "error": "Both `scene` and `lines_to_review` are required.",
             "required": ["scene", "lines_to_review"],
         }
+    text_metrics = get_text_metrics({"lines_to_review": lines_to_review})
     calibration_hints = get_calibration_hints(arguments)
     korean_naturalness_hints = get_korean_naturalness_hints(arguments)
+    dataset_guidance = get_dataset_guidance(arguments)
     return {
         "task": "korean_dialogue_audit",
         "provided_input": {
@@ -474,16 +575,21 @@ def prepare_dialogue_audit(arguments: dict[str, Any]) -> dict[str, Any]:
         "output_schema_uri": "malmatch://schemas/evaluation_result",
         "calibration_schema_uri": "malmatch://schemas/calibration_hint",
         "korean_naturalness_schema_uri": "malmatch://schemas/korean_naturalness_hint",
+        "text_metrics_schema_uri": "malmatch://schemas/text_metrics",
+        "dataset_guidance_schema_uri": "malmatch://schemas/dataset_guidance",
+        "text_metrics": text_metrics,
+        "dataset_guidance": dataset_guidance,
         "calibration_hints": calibration_hints,
         "korean_naturalness_hints": korean_naturalness_hints,
         "guidance": [
             "Score all eight axes from 1 to 5.",
+            "Use dataset guidance as the first source of private-bank baseline context when bank_loaded is true.",
             "Use Korean naturalness hints to inspect grammar, native idiom, and spoken rhythm under naturalness.",
             "Use calibration hints to inspect Korean politeness buffers, directness, and power distance under relationship_fit.",
             "Identify only issues grounded in the provided user lines and skill-pack rubric.",
             "Suggest minimal rewrites that preserve meaning, role, and relationship.",
             "Treat calibration hints as soft signals, not final scores.",
-            "Use synthetic examples only as pattern references.",
+            "Use synthetic examples only as compact pattern references.",
         ],
     }
 
@@ -546,6 +652,8 @@ TOOL_HANDLERS = {
     "get_examples": get_examples,
     "get_calibration_hints": get_calibration_hints,
     "get_korean_naturalness_hints": get_korean_naturalness_hints,
+    "get_text_metrics": get_text_metrics,
+    "get_dataset_guidance": get_dataset_guidance,
     "prepare_dialogue_audit": prepare_dialogue_audit,
     "validate_skillpack": lambda args: validate_skillpack(),
 }

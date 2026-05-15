@@ -17,7 +17,7 @@ from xml.etree import ElementTree
 
 
 DATA_EXTENSIONS = {".zip", ".xlsx", ".json"}
-DEFAULT_SKIP_DIRS = {".git", ".omx", "__pycache__", "tools", "docs"}
+DEFAULT_SKIP_DIRS = {".git", ".malmatch", ".omx", "__pycache__", "tools", "docs"}
 MAX_JSON_BYTES = 10 * 1024 * 1024
 SENSITIVE_VALUE_KEYS = {
     "text",

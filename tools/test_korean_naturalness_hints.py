@@ -10,9 +10,10 @@ from korean_naturalness_hints import build_korean_naturalness_hints
 
 def test_translationese_and_grammar_hints() -> None:
     lines = [
-        "A: 나는은 이것은 좋은 결정이라고 생각한다.",
+        "A: 저는 그것은 좋은 결정이라고 생각합니다.",
         "B: 좋은 시간을 보내.",
         "C: 결정을 만들자.",
+        "D: 그리고 그리고 바로 움직이자.",
     ]
     result = build_korean_naturalness_hints(lines)
 
@@ -20,19 +21,20 @@ def test_translationese_and_grammar_hints() -> None:
     assert "grammar_acceptability" in axes
     assert "native_korean_idiom" in axes
     assert result["basis"]["stored_text"] is False
-    assert result["input_metrics"]["line_count"] == 3
+    assert result["input_metrics"]["line_count"] == 4
+    assert result["input_metrics"]["text_metrics"]["schema"] == "text_metrics"
 
     serialized = json.dumps(result, ensure_ascii=False)
-    for source_fragment in ["나는은", "좋은 시간을 보내", "결정을 만들자"]:
+    for source_fragment in ["그것은 좋은 결정", "좋은 시간을 보내", "결정을 만들자"]:
         assert source_fragment not in serialized
 
 
 def test_spoken_rhythm_hint() -> None:
     lines = [
-        "A: 저는 현재 상황에 대해 깊이 고민하고 있습니다.",
-        "B: 그것은 우리가 해결해야 하는 문제입니다.",
-        "A: 저는 이 결정이 필요하다고 생각합니다.",
-        "B: 그것은 매우 중요한 일입니다.",
+        "A: 현재 상황은 매우 복잡한 것으로 보인다.",
+        "B: 우리는 이 문제를 신중하게 검토해야 할 것이다.",
+        "A: 그것은 중요한 결정이라고 생각한다.",
+        "B: 따라서 다음 행동을 선택할 필요가 있다.",
     ]
     result = build_korean_naturalness_hints(lines)
 
@@ -45,9 +47,11 @@ def test_spoken_rhythm_hint() -> None:
 def test_common_grammar_error_hints() -> None:
     lines = [
         "A: 이제 되요?",
-        "B: 어떻해, 시간이 없잖아.",
+        "B: 어떻해, 몇일 시간이 없잖아.",
         "A: 아니예요, 제가 갈려고 했습니다요.",
-        "B: 오늘 할께. 그럴 수있어.",
+        "B: 오늘 할께. 그럼 수있어.",
+        "C: 웬지 안되겠어. 하고있어.",
+        "D: 못해 본 것같아. 갈 줄알았어.",
     ]
     result = build_korean_naturalness_hints(lines)
 
@@ -63,18 +67,24 @@ def test_common_grammar_error_hints() -> None:
     assert "nonstandard_polite_ending" in signals
     assert "halge_misspelling" in signals
     assert "bound_noun_spacing" in signals
+    assert "waen_wen_confusion" in signals
+    assert "an_dwae_spacing" in signals
+    assert "mot_spacing_suspect" in signals
+    assert "bound_noun_spacing_expanded" in signals
+    assert "auxiliary_spacing_suspect" in signals
     assert "doe_dwae_confusion" in result["signal_catalog"]
-    assert "되/돼" in result["signal_catalog"]["doe_dwae_confusion"]
+    assert "doe_dwae_confusion" in result["suggestion_catalog"]
+    assert "waen_wen_confusion" in result["suggestion_catalog"]
 
     serialized = json.dumps(result, ensure_ascii=False)
-    for source_fragment in ["되요", "어떻해", "갈려고", "수있어"]:
+    for source_fragment in ["이제 되요", "어떻해", "갈려고", "수있어", "하고있어"]:
         assert source_fragment not in serialized
 
 
 def test_common_particle_surface_not_flagged() -> None:
     lines = [
-        "A: 종이가 책상 위에 있어요.",
-        "B: 고양이가 문 앞에 앉아 있어요.",
+        "A: 종이가 책상 위에 있어.",
+        "B: 고양이가 문 앞에 앉아 있어.",
     ]
     result = build_korean_naturalness_hints(lines)
 

@@ -1,0 +1,41 @@
+schema: text_metrics
+version: 0.1.0
+description: 원문을 저장하지 않는 로컬 대사 길이와 바이트 지표 계약
+required:
+  - basis
+  - line_count
+  - line_breaks
+  - total_nfc_chars
+  - avg_nfc_chars
+  - max_nfc_chars
+  - total_chars_without_whitespace
+  - total_utf8_bytes
+  - total_neis_bytes
+  - per_line
+basis:
+  stored_text: boolean
+  source_text_values: string
+  normalization: NFC
+  line_break_rule: CRLF, LF, CR, U+2028, and U+2029; CRLF counts once
+metrics:
+  line_count: integer
+  line_breaks: integer
+  total_nfc_chars: integer
+  avg_nfc_chars: number
+  max_nfc_chars: integer
+  total_chars_without_whitespace: integer
+  avg_chars_without_whitespace: number
+  max_chars_without_whitespace: integer
+  total_utf8_bytes: integer
+  avg_utf8_bytes: number
+  max_utf8_bytes: integer
+  total_neis_bytes: integer
+  avg_neis_bytes: number
+  max_neis_bytes: integer
+per_line_item:
+  line_index: integer
+  nfc_chars: integer
+  chars_without_whitespace: integer
+  utf8_bytes: integer
+  neis_bytes: integer
+rule: per_line에는 원문 문자열을 넣지 않고 라인 인덱스와 수치만 저장한다.

@@ -29,11 +29,24 @@
 
 ## 5. 보정 힌트는 참고 신호로만 쓴다
 
-MCP의 `prepare_dialogue_audit`, `get_calibration_hints`, `get_korean_naturalness_hints`는
-길이, 어체 혼합, 관계선, 예의 맥락, 문법성, 번역투, 구어 리듬 위험 같은 로컬 보정 힌트를 함께 반환할 수 있습니다.
+MCP의 `prepare_dialogue_audit`, `get_dataset_guidance`, `get_text_metrics`, `get_calibration_hints`, `get_korean_naturalness_hints`는
+데이터셋 기준, NFC 문자 수, UTF-8/NEIS식 바이트, 어체 혼합, 관계선, 예의 맥락, 문법성, 맞춤법/띄어쓰기 후보, 번역투, 구어 리듬 위험 같은 로컬 보정 힌트를 함께 반환할 수 있습니다.
 이 힌트는 최종 점수가 아니라 검토 우선순위를 잡기 위한 참고 신호입니다.
+
+길이 판단은 단순 `len()` 추정이 아니라 `schemas/text_metrics.schema.yaml`의 계약을 따릅니다.
+맞춤법/문법 힌트는 외부 검사기 없이 로컬 규칙으로 후보만 표시하며, 원문과 교정문 전문을 응답 산출물에 저장하지 않습니다.
+
+`get_examples`는 작은 합성 패턴 카드로만 사용합니다. 많은 예시를 추가하기보다
+로컬 데이터셋에서 `.malmatch/private_pattern_bank.json`을 만들고 `get_dataset_guidance`를 우선 사용합니다.
+기본 보정 기준은 `balanced`이며, 데이터셋별 통계를 같은 가중치로 평균 내 큰 데이터셋 편향을 줄입니다.
+전체 raw 빈도 자체가 필요할 때만 `baseline_mode: "raw"`를 사용합니다.
 
 ## 6. 예시는 직접 확장한다
 
 `examples/good_bad_pairs.yaml`은 합성 예시입니다.
 프로젝트에서 추가할 때도 같은 필드를 유지하고, 원문 데이터셋 문장을 복사하지 않습니다.
+
+## 7. 데이터셋 산출물은 로컬에만 둔다
+
+AI Hub 등에서 받은 원본 데이터와 `.malmatch/*.json` 내부 분석 산출물은 공개 repo, 릴리스, 패키지에 포함하지 않습니다.
+데이터셋 기반 설계의 공개 배포 기준은 [데이터셋 사용과 공개 배포 원칙](dataset_distribution.md)을 따릅니다.

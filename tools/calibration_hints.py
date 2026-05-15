@@ -14,8 +14,10 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
+from text_metrics import build_text_metrics
 
-VERSION = "0.2.1"
+
+VERSION = "0.2.2"
 
 DEFAULT_THRESHOLDS = {
     "soft_max_chars": 60,
@@ -204,11 +206,12 @@ def build_calibration_hints(
     lines = normalize_lines(lines_to_review)
     thresholds = load_thresholds(profile_path)
     stripped = [strip_speaker_prefix(line) for line in lines]
-    lengths = [len(line) for line in stripped]
-    line_count = len(lines)
-    total_chars = sum(lengths)
-    avg_chars = round(total_chars / line_count, 1) if line_count else 0.0
-    max_chars = max(lengths) if lengths else 0
+    text_metrics = build_text_metrics(stripped, strip_speakers=False)
+    lengths = [item["nfc_chars"] for item in text_metrics["per_line"]]
+    line_count = text_metrics["line_count"]
+    total_chars = text_metrics["total_nfc_chars"]
+    avg_chars = text_metrics["avg_nfc_chars"]
+    max_chars = text_metrics["max_nfc_chars"]
     speech_counts = Counter(classify_speech_level(line) for line in lines)
     context = " ".join(
         str(value)
@@ -465,6 +468,7 @@ def build_calibration_hints(
             "total_chars": total_chars,
             "avg_chars": avg_chars,
             "max_chars": max_chars,
+            "text_metrics": text_metrics,
             "speech_level_counts": {level: speech_counts.get(level, 0) for level in SPEECH_LEVELS},
         },
         "hints": hints,
@@ -479,7 +483,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--scene", default="")
     parser.add_argument("--medium", default="")
     parser.add_argument("--genre", default="")
-    parser.add_argument("--profile", type=Path, default=Path(".omx/pattern_profile.json"))
+    parser.add_argument("--profile", type=Path, default=Path(".malmatch/pattern_profile.json"))
     return parser.parse_args()
 
 

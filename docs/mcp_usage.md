@@ -22,6 +22,22 @@ python <REPO_PATH>/tools/korean_character_voice_mcp.py
 
 The process expects newline-delimited JSON-RPC messages on stdin and writes JSON-RPC responses to stdout.
 
+## Optional Editable Install
+
+For local development or a local MCP client, install the repository in editable mode:
+
+```bash
+python -m pip install -e <REPO_PATH>
+```
+
+Then use the console entry point:
+
+```bash
+malmatch-mcp
+```
+
+The direct script path remains supported and is the most explicit option for clients that prefer absolute Python script paths.
+
 ## MCP Client Configuration
 
 Use this command and args in a local MCP client:
@@ -34,6 +50,19 @@ Use this command and args in a local MCP client:
       "args": [
         "<REPO_PATH>\\tools\\korean_character_voice_mcp.py"
       ]
+    }
+  }
+}
+```
+
+After editable install, this shorter form is also available:
+
+```json
+{
+  "mcpServers": {
+    "malmatch": {
+      "command": "malmatch-mcp",
+      "args": []
     }
   }
 }
@@ -78,6 +107,12 @@ Do not publish raw datasets, `.malmatch/data_inventory.json`, `.malmatch/pattern
 - `validate_skillpack`
 
 ## Smoke Test
+
+```bash
+python tools/run_tests.py
+```
+
+For only the stdio MCP smoke test:
 
 ```bash
 python tools/test_mcp_stdio.py

@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "malmatch"
+version = "0.1.0"
+description = "Korean character dialogue QA as a local MCP skill pack."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+malmatch-mcp = "tools.korean_character_voice_mcp:main"
+
+[tool.setuptools.packages.find]
+include = ["tools"]
+
+[tool.setuptools.data-files]
+"share/malmatch" = ["README.md"]
+"share/malmatch/docs" = ["docs/*.md"]
+"share/malmatch/examples" = ["examples/*.yaml"]
+"share/malmatch/prompts" = ["prompts/*.md"]
+"share/malmatch/sample_project" = ["sample_project/*.md", "sample_project/*.yaml"]
+"share/malmatch/schemas" = ["schemas/*.yaml"]
+"share/malmatch/skills" = ["skills/*.md"]

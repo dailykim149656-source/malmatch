@@ -10,7 +10,10 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
-from calibration_hints import classify_speech_level, normalize_lines, strip_speaker_prefix
+try:
+    from .calibration_hints import classify_speech_level, normalize_lines, strip_speaker_prefix
+except ImportError:  # pragma: no cover - direct script execution
+    from calibration_hints import classify_speech_level, normalize_lines, strip_speaker_prefix
 
 
 VERSION = "0.1"

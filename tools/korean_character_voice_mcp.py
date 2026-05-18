@@ -10,18 +10,37 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from calibration_hints import build_calibration_hints
-from dataset_guidance import build_dataset_guidance
-from korean_naturalness_hints import build_korean_naturalness_hints
-from text_metrics import build_text_metrics
+try:
+    from .calibration_hints import build_calibration_hints
+    from .dataset_guidance import build_dataset_guidance
+    from .korean_naturalness_hints import build_korean_naturalness_hints
+    from .text_metrics import build_text_metrics
+except ImportError:  # pragma: no cover - direct script execution
+    from calibration_hints import build_calibration_hints
+    from dataset_guidance import build_dataset_guidance
+    from korean_naturalness_hints import build_korean_naturalness_hints
+    from text_metrics import build_text_metrics
 
 
 PROTOCOL_VERSION = "2025-11-25"
 SERVER_NAME = "malmatch"
 SERVER_VERSION = "0.1.0"
-ROOT = Path(__file__).resolve().parents[1]
-LOCAL_STATE_DIR = ROOT / ".malmatch"
-LEGACY_STATE_DIR = ROOT / ".omx"
+CODE_ROOT = Path(__file__).resolve().parents[1]
+
+
+def resolve_public_root() -> Path:
+    candidates = [
+        CODE_ROOT,
+        Path(sys.prefix) / "share" / "malmatch",
+        Path(sys.base_prefix) / "share" / "malmatch",
+    ]
+    for candidate in candidates:
+        if (candidate / "README.md").exists() and (candidate / "docs").is_dir():
+            return candidate.resolve()
+    return CODE_ROOT
+
+
+ROOT = resolve_public_root()
 
 RESOURCE_FILES = {
     "malmatch://README": ("README", "README.md", "text/markdown"),
@@ -129,10 +148,12 @@ def read_text(relative_path: str) -> str:
 
 
 def local_state_file(name: str) -> Path:
-    primary = LOCAL_STATE_DIR / name
-    if primary.exists():
-        return primary
-    return LEGACY_STATE_DIR / name
+    for root in [Path.cwd().resolve(), ROOT]:
+        for directory in [root / ".malmatch", root / ".omx"]:
+            candidate = directory / name
+            if candidate.exists():
+                return candidate
+    return ROOT / ".malmatch" / name
 
 
 def write_response(payload: dict[str, Any]) -> None:
@@ -597,7 +618,7 @@ def prepare_dialogue_audit(arguments: dict[str, Any]) -> dict[str, Any]:
 def validate_skillpack() -> dict[str, Any]:
     command = [
         sys.executable,
-        str(ROOT / "tools" / "check_no_source_text.py"),
+        str(CODE_ROOT / "tools" / "check_no_source_text.py"),
         "--paths",
         "README.md",
         "docs/evaluation_rubric.md",

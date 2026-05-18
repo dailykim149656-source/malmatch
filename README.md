@@ -29,7 +29,21 @@
 Python 3.11 이상이 필요합니다. 먼저 MCP 서버가 정상 동작하는지 확인합니다.
 
 ```bash
+python tools/run_tests.py
+```
+
+개별 MCP smoke test만 빠르게 확인하려면 아래 명령을 사용할 수 있습니다.
+
+```bash
 python tools/test_mcp_stdio.py
+```
+
+선택적으로 editable 설치를 하면 `malmatch-mcp` entry point를 사용할 수 있습니다.
+현재 저장소의 공개 리소스 파일을 함께 읽는 로컬 스킬팩이므로, 개발/로컬 사용에는 editable 설치를 권장합니다.
+
+```bash
+python -m pip install -e .
+malmatch-mcp
 ```
 
 MCP 클라이언트 설정에서는 `<REPO_PATH>`를 이 저장소의 절대 경로로 바꿔 등록합니다.
@@ -59,6 +73,19 @@ Claude Desktop 또는 일반 MCP 클라이언트:
     "malmatch": {
       "command": "python",
       "args": ["<REPO_PATH>\\tools\\korean_character_voice_mcp.py"]
+    }
+  }
+}
+```
+
+editable 설치 후에는 command를 `malmatch-mcp`로 둘 수도 있습니다.
+
+```json
+{
+  "mcpServers": {
+    "malmatch": {
+      "command": "malmatch-mcp",
+      "args": []
     }
   }
 }

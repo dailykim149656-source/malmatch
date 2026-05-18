@@ -13,7 +13,10 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any, Iterable
 
-from calibration_hints import classify_speech_level
+try:
+    from .calibration_hints import classify_speech_level
+except ImportError:  # pragma: no cover - direct script execution
+    from calibration_hints import classify_speech_level
 
 
 VERSION = "0.1"

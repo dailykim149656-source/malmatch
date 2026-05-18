@@ -12,8 +12,12 @@ import json
 import re
 from typing import Any
 
-from calibration_hints import normalize_lines, strip_speaker_prefix
-from text_metrics import build_text_metrics
+try:
+    from .calibration_hints import normalize_lines, strip_speaker_prefix
+    from .text_metrics import build_text_metrics
+except ImportError:  # pragma: no cover - direct script execution
+    from calibration_hints import normalize_lines, strip_speaker_prefix
+    from text_metrics import build_text_metrics
 
 
 VERSION = "0.4.0"

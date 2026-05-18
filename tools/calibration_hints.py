@@ -14,7 +14,10 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
-from text_metrics import build_text_metrics
+try:
+    from .text_metrics import build_text_metrics
+except ImportError:  # pragma: no cover - direct script execution
+    from text_metrics import build_text_metrics
 
 
 VERSION = "0.2.2"

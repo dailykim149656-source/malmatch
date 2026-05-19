@@ -94,11 +94,40 @@ def test_common_particle_surface_not_flagged() -> None:
     assert not grammar_hints
 
 
+def test_ai_style_punctuation_and_formulaic_frames() -> None:
+    lines = [
+        "A: 핵심은 속도가 아니다. 방향이다.",
+        "B: 단순히 빨리 가는 게 아니라 같이 가는 거야.",
+        "C: 괜찮아 — 지금은 네 말부터 듣자.",
+        "D: 결국 중요한 것은 네가 다시 서는 거야.",
+    ]
+    result = build_korean_naturalness_hints(lines)
+
+    rhythm_hints = [
+        hint for hint in result["hints"] if hint["axis"] == "spoken_korean_rhythm"
+    ]
+    assert rhythm_hints
+    signals = {
+        signal
+        for hint in rhythm_hints
+        for signal in hint["signals"]
+    }
+    assert "em_dash_punctuation" in signals
+    assert "formulaic_contrast_frame" in signals
+    assert "formulaic_transition_frame" in signals
+    assert "em_dash_punctuation" in result["suggestion_catalog"]
+
+    serialized = json.dumps(result, ensure_ascii=False)
+    for source_fragment in ["핵심은 속도", "괜찮아", "다시 서는 거야"]:
+        assert source_fragment not in serialized
+
+
 def main() -> int:
     test_translationese_and_grammar_hints()
     test_spoken_rhythm_hint()
     test_common_grammar_error_hints()
     test_common_particle_surface_not_flagged()
+    test_ai_style_punctuation_and_formulaic_frames()
     print("Korean naturalness hint tests passed.")
     return 0
 

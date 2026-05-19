@@ -1,5 +1,5 @@
 schema: korean_naturalness_hints
-version: 0.4.0
+version: 0.4.1
 description: 한국어 문법성, 한국어다운 표현, 구어 리듬 보정 힌트 형식
 required:
   - basis

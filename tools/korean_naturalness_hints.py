@@ -20,7 +20,7 @@ except ImportError:  # pragma: no cover - direct script execution
     from text_metrics import build_text_metrics
 
 
-VERSION = "0.4.0"
+VERSION = "0.4.1"
 
 AXES = (
     "grammar_acceptability",
@@ -57,6 +57,22 @@ GRAMMAR_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("bound_noun_spacing_expanded", re.compile(r"(?:것|거)같|수(?:있|없)|줄(?:알|모르)")),
     ("auxiliary_spacing_suspect", re.compile(r"(?:하고|되어|돼|가고|오고|보고|먹고|살고|읽고|찾고)있")),
     ("honorific_ending_collision", ENDING_COLLISION_RE),
+)
+
+AI_STYLE_RHYTHM_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
+    ("em_dash_punctuation", re.compile(r"—")),
+    (
+        "formulaic_contrast_frame",
+        re.compile(
+            r"(핵심은.{0,40}(?:아니라|아니다)|"
+            r"중요한\s+(?:것은|건).{0,40}(?:아니라|아니다)|"
+            r"단순히.{0,40}아니라)"
+        ),
+    ),
+    (
+        "formulaic_transition_frame",
+        re.compile(r"(결국\s+중요한\s+(?:것은|건)|(?:꽤\s+)?흥미로운\s+지점)"),
+    ),
 )
 
 TRANSLATIONESE_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
@@ -103,6 +119,9 @@ SIGNAL_DESCRIPTIONS = {
     "have_problem_literalism": "영어식 have a problem 직역 후보",
     "tell_me_literalism": "영어식 tell me 직역 후보",
     "good_time_literalism": "영어식 have a good time 직역 후보",
+    "em_dash_punctuation": "한국어 대화에서 영어식 부연처럼 보일 수 있는 긴 줄표 후보",
+    "formulaic_contrast_frame": "AI 초안처럼 보일 수 있는 반복 대비 구문 후보",
+    "formulaic_transition_frame": "AI 초안처럼 보일 수 있는 반복 전환 구문 후보",
     "written_register_cluster": "대화보다 문어체 문장에 가까운 말투 후보",
     "missing_short_reaction_turns": "짧은 반응 턴 부족 후보",
     "explicit_pronoun_overuse": "명시 주어/대명사 과다 후보",
@@ -156,6 +175,18 @@ SUGGESTION_CATALOG = {
     "honorific_ending_collision": {
         "suggestion_type": "speech_level_review",
         "rationale": "한 턴 안의 종결 어미 높임 단계가 의도적으로 전환된 것인지 확인합니다.",
+    },
+    "em_dash_punctuation": {
+        "suggestion_type": "punctuation_rhythm_review",
+        "rationale": "긴 줄표가 캐릭터의 자연스러운 호흡이 아니라 영어식 부연 장치처럼 보이는지 확인합니다.",
+    },
+    "formulaic_contrast_frame": {
+        "suggestion_type": "formulaic_phrase_review",
+        "rationale": "반복 대비 구문이 캐릭터 고유 말투를 지우는 템플릿처럼 보이는지 확인합니다.",
+    },
+    "formulaic_transition_frame": {
+        "suggestion_type": "formulaic_phrase_review",
+        "rationale": "전환 문구가 설명문 초안처럼 반복되어 대화 리듬을 평평하게 만들지 확인합니다.",
     },
 }
 
@@ -217,6 +248,8 @@ def build_korean_naturalness_hints(lines_to_review: Any) -> dict[str, Any]:
     grammar_signals: list[str] = []
     idiom_refs: list[int] = []
     idiom_signals: list[str] = []
+    rhythm_refs: list[int] = []
+    rhythm_signals: list[str] = []
 
     written_refs: list[int] = []
     short_reaction_refs: list[int] = []
@@ -246,6 +279,11 @@ def build_korean_naturalness_hints(lines_to_review: Any) -> dict[str, Any]:
             if pattern.search(line):
                 idiom_refs.append(index)
                 idiom_signals.append(signal)
+
+        for signal, pattern in AI_STYLE_RHYTHM_PATTERNS:
+            if pattern.search(line):
+                rhythm_refs.append(index)
+                rhythm_signals.append(signal)
 
         if WRITTEN_ENDING_RE.search(line):
             written_refs.append(index)
@@ -278,6 +316,18 @@ def build_korean_naturalness_hints(lines_to_review: Any) -> dict[str, Any]:
                 idiom_signals,
                 idiom_refs,
                 "Possible translationese or non-native Korean collocation pattern.",
+            )
+        )
+
+    if rhythm_refs:
+        hints.append(
+            make_hint(
+                "spoken_korean_rhythm",
+                -1,
+                0.58,
+                rhythm_signals,
+                rhythm_refs,
+                "Possible AI-draft punctuation, contrast frame, or formulaic transition affecting spoken rhythm.",
             )
         )
 

@@ -27,6 +27,7 @@
 - Grammar acceptability: 조사, 어미, 호응, 높임 표현이 자연스러운가
 - Native Korean idiom: 영어식 직역이나 한국어에서 덜 쓰는 결합이 없는가
 - Spoken Korean rhythm: 실제 대화처럼 짧은 반응, 생략, 호흡이 살아 있는가
+- AI-style draft rhythm: 긴 줄표, 영어식 부연 구조, 반복 대비 구문이 캐릭터 말투를 덮지 않는가
 
 ## Character Fit
 

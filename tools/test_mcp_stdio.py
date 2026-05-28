@@ -181,6 +181,7 @@ def main() -> int:
         resources = assert_result(client.request("resources/list"))["resources"]
         resource_uris = {resource["uri"] for resource in resources}
         assert "malmatch://docs/evaluation_rubric" in resource_uris
+        assert "malmatch://schemas/evaluation_result" in resource_uris
         assert "malmatch://schemas/calibration_hint" in resource_uris
         assert "malmatch://schemas/korean_naturalness_hint" in resource_uris
         assert "malmatch://schemas/text_metrics" in resource_uris
@@ -190,7 +191,10 @@ def main() -> int:
             client.request("resources/read", {"uri": "malmatch://schemas/evaluation_result"})
         )
         assert "contents" in resource
-        assert "evaluation_result" in resource["contents"][0]["text"]
+        evaluation_schema_text = resource["contents"][0]["text"]
+        assert "evaluation_result" in evaluation_schema_text
+        for field_name in ["category", "severity", "scope", "source", "signal_ids"]:
+            assert field_name in evaluation_schema_text
 
         calibration_resource = assert_result(
             client.request("resources/read", {"uri": "malmatch://schemas/calibration_hint"})

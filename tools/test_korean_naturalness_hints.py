@@ -8,6 +8,14 @@ import json
 from korean_naturalness_hints import build_korean_naturalness_hints
 
 
+def all_signals(result: dict) -> set[str]:
+    return {
+        signal
+        for hint in result["hints"]
+        for signal in hint["signals"]
+    }
+
+
 def test_translationese_and_grammar_hints() -> None:
     lines = [
         "A: 저는 그것은 좋은 결정이라고 생각합니다.",
@@ -73,6 +81,8 @@ def test_common_grammar_error_hints() -> None:
     assert "bound_noun_spacing_expanded" in signals
     assert "auxiliary_spacing_suspect" in signals
     assert "doe_dwae_confusion" in result["signal_catalog"]
+    assert result["signal_metadata"]["doe_dwae_confusion"]["category"] == "spelling"
+    assert result["signal_metadata"]["honorific_ending_collision"]["severity"] == "high"
     assert "doe_dwae_confusion" in result["suggestion_catalog"]
     assert "waen_wen_confusion" in result["suggestion_catalog"]
 
@@ -122,12 +132,82 @@ def test_ai_style_punctuation_and_formulaic_frames() -> None:
         assert source_fragment not in serialized
 
 
+def test_post_editese_translationese_signals() -> None:
+    lines = [
+        "A: 그녀는 그녀의 선택이 모두에게 영향을 줄 것이라고 말했어요.",
+        "B: 이 문제는 위원회에 의해 처리되어진다고 들었어요.",
+        "C: 회의에서의 결정은 우리에게 중요한 의미를 가지고 있어요.",
+        "D: 데이터는 새로운 결과를 보여주고 있어요.",
+    ]
+    result = build_korean_naturalness_hints(lines)
+    signals = all_signals(result)
+
+    assert "third_person_pronoun_literalism" in signals
+    assert "by_passive_literalism" in signals
+    assert "double_passive_literalism" in signals
+    assert "double_particle_literalism" in signals
+    assert "have_make_literalism_expanded" in signals
+    assert "progressive_aspect_cluster" in signals
+    assert result["input_metrics"]["third_person_pronoun_count"] >= 2
+    assert result["input_metrics"]["progressive_aspect_count"] >= 2
+    assert "third_person_pronoun_literalism" in result["suggestion_catalog"]
+    assert result["signal_metadata"]["third_person_pronoun_literalism"]["scope"] == "scene"
+    assert result["signal_metadata"]["double_passive_literalism"]["severity"] == "high"
+    assert "double_particle_literalism" in result["signal_catalog"]
+
+    serialized = json.dumps(result, ensure_ascii=False)
+    for source_fragment in ["그녀의 선택", "위원회에 의해", "회의에서의 결정", "데이터는 새로운"]:
+        assert source_fragment not in serialized
+
+
+def test_relative_clause_and_discourse_rhythm_signals() -> None:
+    lines = [
+        "A: 내가 어제 말한 오래 묻혀 있던 네가 놓친 단서를 아는 사람이 왔어.",
+        "B: 따라서 우리는 움직인다.",
+        "A: 이를 통해 단서를 확인한다.",
+        "B: 지금 판단한다.",
+        "A: 모두 기록한다.",
+    ]
+    result = build_korean_naturalness_hints(lines)
+    signals = all_signals(result)
+
+    assert "relative_clause_stack" in signals
+    assert "ai_discourse_marker_cluster" in signals
+    assert "da_ending_streak" in signals
+    assert result["input_metrics"]["relative_clause_stack_count"] == 1
+    assert result["input_metrics"]["discourse_marker_count"] == 2
+    assert result["input_metrics"]["da_ending_streak_line_count"] >= 4
+
+    serialized = json.dumps(result, ensure_ascii=False)
+    for source_fragment in ["어제 말한", "묻혀 있던", "움직인다"]:
+        assert source_fragment not in serialized
+
+
+def test_dialogue_safe_post_editese_surfaces_not_overflagged() -> None:
+    lines = [
+        "A: 그건 네 잘못이 아니야.",
+        "B: 나 지금 기다리고 있어.",
+        "A: 종이가 책상 위에 있어.",
+        "B: 그래, 조금만 더 있어.",
+    ]
+    result = build_korean_naturalness_hints(lines)
+    signals = all_signals(result)
+
+    assert "third_person_pronoun_literalism" not in signals
+    assert "progressive_aspect_cluster" not in signals
+    assert "double_particle_literalism" not in signals
+    assert result["input_metrics"]["progressive_aspect_count"] == 1
+
+
 def main() -> int:
     test_translationese_and_grammar_hints()
     test_spoken_rhythm_hint()
     test_common_grammar_error_hints()
     test_common_particle_surface_not_flagged()
     test_ai_style_punctuation_and_formulaic_frames()
+    test_post_editese_translationese_signals()
+    test_relative_clause_and_discourse_rhythm_signals()
+    test_dialogue_safe_post_editese_surfaces_not_overflagged()
     print("Korean naturalness hint tests passed.")
     return 0
 

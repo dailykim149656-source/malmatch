@@ -116,11 +116,13 @@ get_rubric과 prepare_dialogue_audit 기준으로 평가하고, 필요한 경우
 | `get_dataset_guidance` | 로컬 비공개 패턴 뱅크 기반 상황별 힌트 생성 |
 | `get_text_metrics` | NFC 문자 수, 공백 제외 문자 수, UTF-8 바이트, NEIS식 바이트 지표 계산 |
 | `get_calibration_hints` | 길이, 어체, 관계선, 한국어 예의 맥락 위험 힌트 생성 |
-| `get_korean_naturalness_hints` | 문법성, 맞춤법/띄어쓰기 후보, 번역투, 구어 리듬 힌트 생성 |
+| `get_korean_naturalness_hints` | 문법성, 맞춤법/띄어쓰기 후보, 번역투/post-editese, 구어 리듬 힌트 생성 |
 | `get_examples` | 작은 합성 good/bad 패턴 카드 조회 |
 | `validate_skillpack` | 공개 파일과 예시 구조 기본 검증 |
 
 `get_examples`는 짧은 참고 카드입니다. 기준 보정은 예시를 계속 늘리는 방식보다 `get_dataset_guidance`와 로컬 패턴 뱅크를 우선 사용합니다.
+`get_korean_naturalness_hints`는 트리거된 신호 설명과 함께 category, severity, scope 메타데이터를 반환합니다.
+최종 `evaluation_result`의 finding도 같은 category, severity, scope 체계를 선택적으로 공유해, 자동 힌트와 사람 검수 결과를 같은 우선순위로 정렬할 수 있습니다.
 
 ## 평가 축
 
@@ -172,7 +174,7 @@ python tools/build_private_pattern_bank.py --inventory .malmatch/data_inventory.
 - `tools/dataset_guidance.py`: 비공개 패턴 뱅크 기반 상황별 보정 힌트 엔진
 - `tools/text_metrics.py`: 원문을 저장하지 않는 로컬 문자 수와 바이트 지표 엔진
 - `tools/calibration_hints.py`: 길이, 어체, 관계선, 예의 맥락 보정 힌트 엔진
-- `tools/korean_naturalness_hints.py`: 문법성, 맞춤법/띄어쓰기, 번역투, 구어 리듬 힌트 엔진
+- `tools/korean_naturalness_hints.py`: 문법성, 맞춤법/띄어쓰기, 번역투/post-editese, 구어 리듬 힌트 엔진
 - `docs/evaluation_rubric.md`: 평가 루브릭
 - `docs/usage.md`: 기본 사용법
 - `docs/mcp_usage.md`: MCP 연결 참고

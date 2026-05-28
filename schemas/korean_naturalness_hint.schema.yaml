@@ -1,12 +1,13 @@
 schema: korean_naturalness_hints
-version: 0.4.1
-description: 한국어 문법성, 한국어다운 표현, 구어 리듬 보정 힌트 형식
+version: 0.5.1
+description: 한국어 문법성, 한국어다운 표현, 번역투/post-editese, 구어 리듬 보정 힌트 형식
 required:
   - basis
   - input_metrics
   - axes
   - hints
   - signal_catalog
+  - signal_metadata
 basis:
   stored_text: boolean
   source_text_values: string
@@ -20,6 +21,16 @@ input_metrics:
   short_reaction_count: integer
   written_sentence_count: integer
   explicit_pronoun_count: integer
+  third_person_pronoun_count: integer
+  progressive_aspect_count: integer
+  discourse_marker_count: integer
+  relative_clause_stack_count: integer
+  da_ending_streak_line_count: integer
+  ending_key_diversity: number
+  post_editese_signal_counts:
+    type: object
+    key: signal id string
+    value: integer count
 axis_values:
   - grammar_acceptability
   - native_korean_idiom
@@ -38,6 +49,13 @@ signal_catalog:
   type: object
   key: signal id string
   value: source-text-free Korean description for the triggered signal
+signal_metadata:
+  type: object
+  key: signal id string
+  value:
+    category: grammar | spelling | spacing | speech_level | translationese | post_editese | ai_draft_rhythm | spoken_rhythm
+    severity: low | medium | high
+    scope: line | scene
 suggestion_catalog:
   type: object
   key: signal id string
@@ -45,4 +63,4 @@ suggestion_catalog:
 confidence:
   type: number
   range: 0.0-0.99
-rule: 힌트는 naturalness 점수를 대체하지 않고 문법성, 번역투, 구어 리듬 검토 우선순위를 제공한다.
+rule: 힌트는 naturalness 점수를 대체하지 않고 문법성, 번역투/post-editese, 구어 리듬 검토 우선순위를 제공한다.

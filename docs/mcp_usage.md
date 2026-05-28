@@ -76,8 +76,10 @@ After editable install, this shorter form is also available:
 4. Call `get_dataset_guidance` when `.malmatch/private_pattern_bank.json` exists and you need dataset-informed context. The default `baseline_mode` is `balanced`; use `raw` only when you want unweighted aggregate frequencies.
 5. Call `get_text_metrics` when you need a stable local line-length or byte-budget contract.
 6. Call `get_calibration_hints` when you need length, speech-level, relationship, or Korean politeness-context signals.
-7. Call `get_korean_naturalness_hints` when you need grammar, spelling/spacing, translationese, or spoken-rhythm signals.
+7. Call `get_korean_naturalness_hints` when you need grammar, spelling/spacing, translationese/post-editese, or spoken-rhythm signals.
+   Use `signal_metadata` to prioritize triggered signals by category, severity, and line/scene scope.
 8. Call `prepare_dialogue_audit` with the user-provided scene and lines.
+   In the final `evaluation_result`, copy only signal IDs and optional `category`, `severity`, `scope`, `source` metadata into findings; do not copy source lines into metadata.
 9. Optionally call `get_examples` for compact synthetic pattern references.
 
 ## Private Pattern Bank

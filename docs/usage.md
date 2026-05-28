@@ -26,15 +26,19 @@
 
 검수 결과는 `schemas/evaluation_result.schema.yaml`의 필드를 사용합니다.
 점수는 1점에서 5점 사이 정수로 쓰고, 수정 제안은 원문의 의미를 크게 바꾸지 않는 범위로 제한합니다.
+각 finding에는 선택적으로 `category`, `severity`, `scope`, `source`, `signal_ids`를 붙일 수 있습니다.
+MCP 힌트가 제공한 `signal_metadata`가 있으면 같은 분류를 재사용해 검토 우선순위를 맞추고, 이 메타데이터에도 원문 문장이나 교정문 전문은 넣지 않습니다.
 
 ## 5. 보정 힌트는 참고 신호로만 쓴다
 
 MCP의 `prepare_dialogue_audit`, `get_dataset_guidance`, `get_text_metrics`, `get_calibration_hints`, `get_korean_naturalness_hints`는
-데이터셋 기준, NFC 문자 수, UTF-8/NEIS식 바이트, 어체 혼합, 관계선, 예의 맥락, 문법성, 맞춤법/띄어쓰기 후보, 번역투, 구어 리듬 위험 같은 로컬 보정 힌트를 함께 반환할 수 있습니다.
+데이터셋 기준, NFC 문자 수, UTF-8/NEIS식 바이트, 어체 혼합, 관계선, 예의 맥락, 문법성, 맞춤법/띄어쓰기 후보, 번역투/post-editese, 구어 리듬 위험 같은 로컬 보정 힌트를 함께 반환할 수 있습니다.
 이 힌트는 최종 점수가 아니라 검토 우선순위를 잡기 위한 참고 신호입니다.
 
 길이 판단은 단순 `len()` 추정이 아니라 `schemas/text_metrics.schema.yaml`의 계약을 따릅니다.
 맞춤법/문법 힌트는 외부 검사기 없이 로컬 규칙으로 후보만 표시하며, 원문과 교정문 전문을 응답 산출물에 저장하지 않습니다.
+번역투/post-editese 힌트도 대명사 직역, 이중 피동, 이중 조사, 긴 관형절, 반복 진행형, 결산 접속 표지 같은 신호의 ID와 라인 번호만 반환합니다.
+트리거된 신호의 `signal_metadata`에는 category, severity, scope가 들어 있어 클라이언트가 먼저 볼 항목을 정렬할 수 있습니다.
 
 `get_examples`는 작은 합성 패턴 카드로만 사용합니다. 많은 예시를 추가하기보다
 로컬 데이터셋에서 `.malmatch/private_pattern_bank.json`을 만들고 `get_dataset_guidance`를 우선 사용합니다.

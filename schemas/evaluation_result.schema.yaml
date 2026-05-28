@@ -1,5 +1,5 @@
 schema: evaluation_result
-version: 0.1
+version: 0.2
 description: 한국어 캐릭터 대사 검수 결과 형식
 required:
   - scores
@@ -23,7 +23,13 @@ finding_fields:
   - reason
   - risk_tags
   - suggested_action
+optional_finding_fields:
+  category: grammar | spelling | spacing | speech_level | translationese | post_editese | ai_draft_rhythm | spoken_rhythm | character_fit | relationship_fit | humor_timing | cringe_risk | anachronism_risk | genre_fit | dataset_guidance | korean_politeness
+  severity: low | medium | high
+  scope: line | scene
+  source: dataset_guidance | korean_naturalness_hints | calibration_hints | rubric | human_review
+  signal_ids: list[string]
+finding_metadata_rule: category, severity, scope, source, signal_ids는 선택 필드다. MCP 힌트의 signal_metadata가 있으면 같은 category, severity, scope를 재사용한다. 원문 문장이나 교정문 전문은 메타데이터에 넣지 않는다.
 rewrite_suggestion:
   type: string
   rule: 의미와 캐릭터 기능을 유지한 최소 수정만 쓴다.
-

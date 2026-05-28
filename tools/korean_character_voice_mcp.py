@@ -264,7 +264,7 @@ def tools_list_result() -> dict[str, Any]:
             {
                 "name": "get_korean_naturalness_hints",
                 "title": "Get Korean Naturalness Hints",
-                "description": "Use this to get source-text-free hints for Korean grammar, idiom, and spoken rhythm.",
+                "description": "Use this to get source-text-free hints for Korean grammar, idiom, translationese/post-editese, and spoken rhythm.",
                 "inputSchema": {
                     "type": "object",
                     "properties": {

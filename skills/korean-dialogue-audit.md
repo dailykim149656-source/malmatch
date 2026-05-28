@@ -26,3 +26,5 @@ AI가 만든 한국어 대사가 장면, 캐릭터, 관계, 매체에 맞는지 
 ## Output
 
 `schemas/evaluation_result.schema.yaml` 형식으로 점수와 근거, 수정 제안을 반환합니다.
+MCP 힌트나 루브릭 축이 근거가 되는 finding에는 `category`, `severity`, `scope`, `source`, `signal_ids`를 선택적으로 붙입니다.
+원문 문장이나 교정문 전문은 메타데이터에 복사하지 않습니다.

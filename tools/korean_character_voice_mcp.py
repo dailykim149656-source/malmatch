@@ -738,6 +738,8 @@ def main() -> int:
         request_id: Any = None
         try:
             message = json.loads(line)
+            if not isinstance(message, dict):
+                raise JsonRpcError(-32600, "Request must be a JSON object.")
             request_id = message.get("id")
             response = handle_request(message)
             if response is not None and request_id is not None:

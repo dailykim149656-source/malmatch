@@ -103,6 +103,17 @@ class McpClient:
         assert response.get("id") == request_id, response
         return response
 
+    def request_raw(self, raw_line: str) -> dict[str, Any]:
+        if not self.process.stdin or not self.process.stdout:
+            raise RuntimeError("MCP server pipes are not available")
+        self.process.stdin.write(raw_line + "\n")
+        self.process.stdin.flush()
+        line = self.process.stdout.readline()
+        if not line:
+            stderr = self.process.stderr.read() if self.process.stderr else ""
+            raise AssertionError(f"No response from MCP server. stderr={stderr!r}")
+        return json.loads(line)
+
 
 def assert_result(response: dict[str, Any]) -> dict[str, Any]:
     assert "error" not in response, response
@@ -335,6 +346,10 @@ def main() -> int:
         assert_error(
             client.request("tools/call", {"name": "missing_tool", "arguments": {}}), -32602
         )
+
+        non_object = client.request_raw("[1, 2, 3]")
+        assert_error(non_object, -32600)
+        assert non_object.get("id") is None, non_object
     finally:
         client.close()
         restore_bank(bank_backup)

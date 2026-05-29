@@ -69,9 +69,9 @@ def should_skip(path: Path, root: Path, out_path: Path) -> bool:
 
 def infer_split(path: str) -> str:
     lowered = path.lower()
-    if any(token in lowered for token in ["validation", "valid", "\\vl_", "/vl_", "[라벨]한국어대화요약_valid"]):
+    if any(token in lowered for token in ["validation", "valid", "/vl_", "[라벨]한국어대화요약_valid"]):
         return "validation"
-    if any(token in lowered for token in ["training", "train", "\\tl_", "/tl_", "[라벨]한국어대화요약_train"]):
+    if any(token in lowered for token in ["training", "train", "/tl_", "[라벨]한국어대화요약_train"]):
         return "training"
     if "test" in lowered:
         return "test"
@@ -82,9 +82,9 @@ def infer_split(path: str) -> str:
 
 def infer_data_role(path: str) -> str:
     lowered = path.lower()
-    if any(token in lowered for token in ["라벨링", "[라벨]", "label", "\\vl_", "/vl_", "\\tl_", "/tl_"]):
+    if any(token in lowered for token in ["라벨링", "[라벨]", "label", "/vl_", "/tl_"]):
         return "label"
-    if any(token in lowered for token in ["원천", "원시", "source", "\\vs_", "/vs_", "\\ts_", "/ts_"]):
+    if any(token in lowered for token in ["원천", "원시", "source", "/vs_", "/ts_"]):
         return "source"
     return "unknown"
 

@@ -26,7 +26,9 @@
 
 ## 빠른 시작
 
-Python 3.11 이상이 필요합니다. 먼저 MCP 서버가 정상 동작하는지 확인합니다.
+Python 3.11 이상이 필요합니다. 아래 예시는 `python` 명령을 사용합니다. macOS와 대부분의 Linux에는 `python`이 없고 `python3`만 있으므로, 그런 환경에서는 `python`을 `python3`로 바꿔 실행하세요.
+
+먼저 MCP 서버가 정상 동작하는지 확인합니다.
 
 ```bash
 python tools/run_tests.py
@@ -47,13 +49,14 @@ malmatch-mcp
 ```
 
 MCP 클라이언트 설정에서는 `<REPO_PATH>`를 이 저장소의 절대 경로로 바꿔 등록합니다.
+경로 구분자는 `/`로 적으면 Windows와 macOS/Linux에서 모두 동작합니다. macOS/Linux에서는 `command`도 `python` 대신 `python3`로 지정해야 할 수 있습니다.
 
 Codex:
 
 ```toml
 [mcp_servers.malmatch]
 command = "python"
-args = ["<REPO_PATH>\\tools\\korean_character_voice_mcp.py"]
+args = ["<REPO_PATH>/tools/korean_character_voice_mcp.py"]
 enabled = true
 startup_timeout_sec = 5
 tool_timeout_sec = 30
@@ -61,8 +64,8 @@ tool_timeout_sec = 30
 
 Claude Code:
 
-```powershell
-claude mcp add-json malmatch '{"type":"stdio","command":"python","args":["<REPO_PATH>\\tools\\korean_character_voice_mcp.py"]}'
+```bash
+claude mcp add-json malmatch '{"type":"stdio","command":"python","args":["<REPO_PATH>/tools/korean_character_voice_mcp.py"]}'
 ```
 
 Claude Desktop 또는 일반 MCP 클라이언트:
@@ -72,7 +75,7 @@ Claude Desktop 또는 일반 MCP 클라이언트:
   "mcpServers": {
     "malmatch": {
       "command": "python",
-      "args": ["<REPO_PATH>\\tools\\korean_character_voice_mcp.py"]
+      "args": ["<REPO_PATH>/tools/korean_character_voice_mcp.py"]
     }
   }
 }

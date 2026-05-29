@@ -273,6 +273,10 @@ class PrivatePatternBankBuilder:
 
     def collect_json(self, value: Any) -> None:
         self.documents_sampled += 1
+        # iter_objects flattens the tree, so a list under a collection-named key is
+        # yielded both as that dict's child (branch A) and on its own (branch B).
+        # Track lists already counted by identity so each conversation counts once.
+        counted_collections: set[int] = set()
         for item in iter_objects(value):
             if isinstance(item, dict):
                 labels: list[str] = []
@@ -290,7 +294,10 @@ class PrivatePatternBankBuilder:
                         self.add_text_features(child, context_blob)
                     if lowered in COLLECTION_FIELD_NAMES and isinstance(child, list):
                         self.add_turn_count(len(child))
+                        counted_collections.add(id(child))
             elif isinstance(item, list):
+                if id(item) in counted_collections:
+                    continue
                 if item and all(isinstance(child, dict) for child in item[: min(len(item), 5)]):
                     has_textish = any(
                         any(str(key).lower() in TEXT_FIELD_NAMES for key in child.keys())

@@ -103,11 +103,37 @@ def test_buffered_polite_request_not_flagged() -> None:
     assert "missing_apology_or_acknowledgement_in_service_context" not in signals
 
 
+def test_embedded_newlines_split_into_aligned_turns() -> None:
+    # A single list item carrying two turns must be treated the same as two
+    # list items, so length-based and pattern-based line_refs stay aligned.
+    joined = build_calibration_hints(
+        ["A: 고객님, 지금 처리하겠습니다.\nB: 야, 너 진짜 운명이야."],
+        profile_path=Path("missing-profile.json"),
+        scene="고객 응대 중 처음 만난 상황",
+        relationship_boundaries="초면, 공식, 고객",
+    )
+    split = build_calibration_hints(
+        ["A: 고객님, 지금 처리하겠습니다.", "B: 야, 너 진짜 운명이야."],
+        profile_path=Path("missing-profile.json"),
+        scene="고객 응대 중 처음 만난 상황",
+        relationship_boundaries="초면, 공식, 고객",
+    )
+
+    assert joined["input_metrics"]["line_count"] == 2
+    assert joined["hints"] == split["hints"]
+    max_ref = max(
+        (ref for hint in joined["hints"] for ref in hint["line_refs"]),
+        default=0,
+    )
+    assert max_ref <= joined["input_metrics"]["line_count"]
+
+
 def main() -> int:
     test_mixed_speech_and_relationship_hints()
     test_length_and_anachronism_hints()
     test_korean_politeness_context_hints()
     test_buffered_polite_request_not_flagged()
+    test_embedded_newlines_split_into_aligned_turns()
     print("Calibration hint tests passed.")
     return 0
 

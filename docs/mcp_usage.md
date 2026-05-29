@@ -2,6 +2,8 @@
 
 말매치 Malmatch includes a local stdio MCP server for Codex, Claude Code, and other MCP clients that can launch a subprocess.
 
+The examples below use `python`. On macOS and most Linux distributions only `python3` exists, so substitute `python3` for `python` in both the shell commands and the MCP client `command` field. Path separators are written with `/`, which works on Windows and macOS/Linux alike.
+
 ## What The Server Does
 
 - Exposes the Malmatch Korean character dialogue rubric as a tool and resource.
@@ -48,7 +50,7 @@ Use this command and args in a local MCP client:
     "malmatch": {
       "command": "python",
       "args": [
-        "<REPO_PATH>\\tools\\korean_character_voice_mcp.py"
+        "<REPO_PATH>/tools/korean_character_voice_mcp.py"
       ]
     }
   }

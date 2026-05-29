@@ -88,20 +88,28 @@ def strip_speaker_prefix(line: str) -> str:
 
 def normalize_lines(lines: Any) -> list[str]:
     if isinstance(lines, str):
-        return [line.strip() for line in lines.splitlines() if line.strip()]
-    if not isinstance(lines, list):
+        candidates = [lines]
+    elif isinstance(lines, list):
+        candidates = []
+        for item in lines:
+            if isinstance(item, str):
+                candidates.append(item)
+            elif isinstance(item, dict):
+                candidates.append(str(item.get("line") or item.get("text") or item.get("content") or ""))
+            else:
+                candidates.append(str(item))
+    else:
         return []
 
+    # Split every candidate on newlines so a multi-line list item becomes one
+    # turn per line, matching string input. Downstream length and pattern hints
+    # both index into this list, so they must agree on what counts as a line.
     normalized: list[str] = []
-    for item in lines:
-        if isinstance(item, str):
-            text = item.strip()
-        elif isinstance(item, dict):
-            text = str(item.get("line") or item.get("text") or item.get("content") or "").strip()
-        else:
-            text = str(item).strip()
-        if text:
-            normalized.append(text)
+    for candidate in candidates:
+        for line in candidate.splitlines():
+            text = line.strip()
+            if text:
+                normalized.append(text)
     return normalized
 
 

@@ -141,9 +141,42 @@ def test_full_scan_and_balanced_baselines() -> None:
     assert source_phrase not in serialized
 
 
+def test_collection_turns_counted_once() -> None:
+    # A conversation under a collection-named key was previously counted twice:
+    # once for the dict's named field and again when iter_objects revisited the
+    # bare list. Each conversation must contribute exactly one turn-count entry.
+    with tempfile.TemporaryDirectory() as raw_tmp:
+        root = Path(raw_tmp)
+        dataset_dir = root / "synthetic_aihub"
+        dataset_dir.mkdir()
+        zip_path = dataset_dir / "sample.zip"
+        source_phrase = "초록색자전거코드"
+        payload = [
+            {
+                "topic": "일상 대화",
+                "conversation": [
+                    {"utterance": f"안녕하세요, 잘 지내요? {source_phrase}"},
+                    {"utterance": f"네, 덕분에 잘 지내고 있어요. {source_phrase}"},
+                ],
+            }
+        ]
+        with zipfile.ZipFile(zip_path, "w") as archive:
+            archive.writestr("labels/sample.json", json.dumps(payload, ensure_ascii=False))
+
+        inventory_path = write_inventory(root, zip_path)
+        bank = build_private_pattern_bank(inventory_path, max_entries_per_zip=20)
+
+    turn_buckets = bank["global_baselines"]["turn_count_buckets"]
+    assert sum(turn_buckets.values()) == 1
+
+    serialized = json.dumps(bank, ensure_ascii=False)
+    assert source_phrase not in serialized
+
+
 def main() -> int:
     test_private_pattern_bank_from_synthetic_zip()
     test_full_scan_and_balanced_baselines()
+    test_collection_turns_counted_once()
     print("Private pattern bank tests passed.")
     return 0
 
